@@ -1,9 +1,11 @@
 { config, lib, pkgs, ... }:  
-  
+
+let
+  secrets = import ../secrets/wifi-laptop.nix;
+in
 {  
   imports = [  
     ./drives/laptop-drives.nix  
-    ../secrets/wifi-laptop.nix  
   ];  
   
   ############################  
@@ -11,8 +13,11 @@
   ############################  
   
   networking.hostName = "nixos-laptop";  
-  networking.wireless.enable = true;  
-  
+  networking.wireless = {
+    enable = true;
+    networks = secrets.networks;
+  };  
+
   ############################  
   # Graphics (NVIDIA laptop)  
   ############################  
