@@ -158,7 +158,7 @@
   ############################  
   
   services.udev.enable = true;  
-  services.openssh.enable = true;  
+  services.openssh.enable = true;   
   
   ############################  
   # System state version  
