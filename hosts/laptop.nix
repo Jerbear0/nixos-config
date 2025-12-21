@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:  
 
 let
-  secrets = import ../secrets/wifi-laptop.nix;
+  secrets = import /etc/nixos/secrets/wifi-laptop.nix;
 in
 {  
   imports = [  
