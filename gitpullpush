@@ -1,0 +1,66 @@
+#!/usr/bin/env bash  
+set -euo pipefail  
+  
+REPO_DIR="/etc/nixos"  
+BRANCH="main"  
+  
+orig_dir="$(pwd)"  
+cd "$REPO_DIR"  
+  
+echo "=== nixos-sync in $REPO_DIR (branch: $BRANCH) ==="  
+  
+# Ensure we're on the right branch (optional; remove if you use multiple branches)  
+git checkout "$BRANCH" >/dev/null 2>&1 || {  
+  echo "Error: could not checkout branch '$BRANCH'."  
+  cd "$orig_dir"  
+  exit 1  
+}  
+  
+# 1. If there are local changes, offer to commit them first  
+if [[ -n "$(git status --porcelain)" ]]; then  
+  echo "You have local changes:"  
+  git status --short  
+  read -rp "Stage and commit these changes? [y/N] " ans  
+  if [[ "$ans" =~ ^[Yy]$ ]]; then  
+    git add .  
+    read -rp "Commit message: " msg  
+    if [[ -z "$msg" ]]; then  
+      echo "Empty commit message; aborting commit."  
+    else  
+      git commit -m "$msg"  
+    fi  
+  else  
+    echo "Skipping commit of local changes."  
+  fi  
+else  
+  echo "No local changes to commit."  
+fi  
+  
+# 2. Pull latest from origin with rebase  
+echo  
+echo ">>> git pull --rebase origin $BRANCH"  
+if ! git pull --rebase origin "$BRANCH"; then  
+  echo "git pull --rebase failed. Resolve conflicts manually, then run this script again."  
+  cd "$orig_dir"  
+  exit 1  
+fi  
+  
+# 3. If we now have commits ahead of origin, offer to push  
+if git log --oneline "origin/$BRANCH"..HEAD | grep -q .; then  
+  echo  
+  echo "New commits to push:"  
+  git log --oneline "origin/$BRANCH"..HEAD  
+  read -rp "Push these commits to origin/$BRANCH? [y/N] " ans  
+  if [[ "$ans" =~ ^[Yy]$ ]]; then  
+    git push origin "$BRANCH"  
+  else  
+    echo "Skipping push."  
+  fi  
+else  
+  echo  
+  echo "No new commits to push."  
+fi  
+  
+cd "$orig_dir"  
+echo "Returned to $orig_dir"  
+

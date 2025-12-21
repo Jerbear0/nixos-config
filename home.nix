@@ -141,12 +141,33 @@ home.packages = with pkgs; [
     '';  
   
     shellAliases = {  
-      lsa = "ls -al";  
-      rs-laptop ="sudo nixos-rebuild switch --flake /etc/nixos#nixos-laptop --impure";
+      lsa = "ls -al"; 
+      ns = "/etc/nixos/gitpullpush";
+      rs-laptop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-laptop --impure";
       rs-desktop ="sudo nixos-rebuild switch --flake /etc/nixos#nixos-desktop --impure";
     };  
   };  
   
+  ############################
+  # Auto git pull service
+  ############################
+  systemd.user.services."nixos-config-autopull" = {  
+    Unit = {  
+      Description = "Auto git pull --rebase for /etc/nixos on login";  
+      After = [ "network-online.target" "default.target" ];  
+    };  
+  
+    Service = {  
+      Type = "oneshot";  
+      WorkingDirectory = "/etc/nixos";  
+      ExecStart = "${pkgs.git}/bin/git pull --rebase";  
+    };  
+  
+    Install = {  
+      WantedBy = [ "default.target" ];  
+    };  
+  };  
+
   ############################  
   # Home Manager state version  
   ############################  
