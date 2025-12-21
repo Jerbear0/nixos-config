@@ -1,0 +1,5 @@
+secrets/
+result  
+*.swp  
+*.tmp  
+EOF 
