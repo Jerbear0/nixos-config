@@ -4,13 +4,12 @@
   imports = [  
     ./home/common/hyprland.nix  
   ]   
-  # Import the secret git module if it exists  
-  ++ (if builtins.pathExists ./secrets/git.nix then [ ./secrets/git.nix ] else [])  
-    
-  # Host-specific Hyprland  
-  ++ (if hostRole == "laptop" then [ ./home/laptop/hyprland.nix ]  
-      else if hostRole == "desktop" then [ ./home/desktop/hyprland.nix ]  
-      else []);
+    ++ (if builtins.pathExists /etc/nixos/secrets/git.nix  
+        then [ /etc/nixos/secrets/git.nix ]  
+        else [])  
+    ++ (if hostRole == "laptop" then [ ./home/laptop/hyprland.nix ]  
+        else if hostRole == "desktop" then [ ./home/desktop/hyprland.nix ]  
+        else []);  
  
   home.username = "jay";  
   home.homeDirectory = "/home/jay";  
@@ -143,6 +142,8 @@ home.packages = with pkgs; [
   
     shellAliases = {  
       lsa = "ls -al";  
+      rs-laptop ="sudo nixos-rebuild switch --flake /etc/nixos#nixos-laptop --impure";
+      rs-desktop ="sudo nixos-rebuild switch --flake /etc/nixos#nixos-desktop --impure";
     };  
   };  
   
