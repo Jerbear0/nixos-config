@@ -32,7 +32,7 @@ in
   
     settings = {  
       # ===== Variables / Programs =====  
-      "$terminal" = "alacritty";  
+      "$terminal" = "alacritty --config-file /etc/nixos/configs/alacritty.toml";  
       "$filemanager" = "dolphin";  
       "$applauncher" = "wofi --show drun";  
       "$mainMod" = "SUPER";  
