@@ -137,7 +137,39 @@ home.packages = with pkgs; [
     '';  
   
     initExtra = ''  
-      fastfetch  
+      fastfetch
+    # Raw escape codes for use in 'echo' (functions)  
+    RAW_RED=$'\e[31m'  
+    RAW_GREEN=$'\e[32m'  
+    RAW_RESET=$'\e[0m'  
+  
+    # Wrapped escape codes for use in PS1 (prompt variable)  
+    CLR_GREEN="\[\e[32m\]"  
+    CLR_CYAN="\[\e[36m\]"  
+    CLR_BLUE="\[\e[34m\]"  
+    CLR_MAGENTA="\[\e[35m\]"  
+    CLR_YELLOW="\[\e[33m\]"  
+    CLR_RESET="\[\e[0m\]"  
+  
+    # Show /etc/nixos Git status  
+    nixos_git_prompt() {  
+      if [ -d /etc/nixos/.git ]; then  
+        # Use subshell to avoid changing directory of the main shell  
+        (  
+          cd /etc/nixos || exit  
+          if [ -n "$(git status --porcelain 2>/dev/null)" ]; then  
+            echo "''${RAW_RED}[nixos:dirty]''${RAW_RESET}"  
+          else  
+            echo "''${RAW_GREEN}[nixos:clean]''${RAW_RESET}"  
+          fi  
+        )  
+      fi  
+    }  
+  
+    # Two-line prompt:  
+    # line 1: user@host:cwd [nixos:state]  
+    # line 2: pretty arrow  
+    PS1="''${CLR_GREEN}\u''${CLR_RESET}@''${CLR_CYAN}\h''${CLR_RESET}:''${CLR_BLUE}\w''${CLR_RESET} \$(nixos_git_prompt)\n''${CLR_MAGENTA}❯''${CLR_CYAN}❯''${CLR_YELLOW}❯ ''${CLR_RESET}"        
     '';  
   
     shellAliases = {  
@@ -166,7 +198,7 @@ home.packages = with pkgs; [
     Install = {  
       WantedBy = [ "default.target" ];  
     };  
-  };  
+  };    
 
   ############################  
   # Home Manager state version  
