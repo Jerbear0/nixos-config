@@ -1,0 +1,31 @@
+add_newline = true  
+  
+# Cosmetic modules only; nixos state is injected from Bash  
+format = "$username$hostname$directory$time\n$character"  
+  
+[username]  
+show_always = true  
+style_user = "bold fg:#d4d4d4 bg:#32374d"  
+# trailing space, but no extra padding inside the pill  
+format = "[ $user ]($style) "  
+  
+[hostname]  
+ssh_only = false  
+style = "bold fg:#d4d4d4 bg:#32374d"  
+format = "[@$hostname ]($style) "  
+  
+[directory]  
+style = "bold fg:#ffffff bg:#3fc4de"  
+format = "[ $path ]($style) "  
+  
+[time]  
+disabled = false  
+time_format = "%H:%M"  
+style = "bold fg:#ffffff bg:#1e88e5"  
+# Note: NO trailing space here, the Bash pill prints its own leading space  
+format = "[$time]($style)"  
+  
+[character]  
+success_symbol = "[❯](bold fg:#3fc4de) "  
+error_symbol   = "[❯](bold fg:#e53935) "  
+ 
