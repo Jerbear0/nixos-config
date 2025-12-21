@@ -1,66 +1,148 @@
 #!/usr/bin/env bash  
 set -euo pipefail  
   
-REPO_DIR="/etc/nixos"  
-BRANCH="main"  
+cd /etc/nixos  
   
-orig_dir="$(pwd)"  
-cd "$REPO_DIR"  
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)"  
   
-echo "=== nixos-sync in $REPO_DIR (branch: $BRANCH) ==="  
-  
-# Ensure we're on the right branch (optional; remove if you use multiple branches)  
-git checkout "$BRANCH" >/dev/null 2>&1 || {  
-  echo "Error: could not checkout branch '$BRANCH'."  
-  cd "$orig_dir"  
-  exit 1  
+# Helper: recompute ahead/behind  
+recalc_ahead_behind() {  
+  local counts  
+  counts=$(git rev-list --left-right --count "origin/$branch"...HEAD 2>/dev/null || echo "0 0")  
+  behind=$(echo "$counts" | awk '{print $1}')  
+  ahead=$(echo "$counts"  | awk '{print $2}')  
 }  
   
-# 1. If there are local changes, offer to commit them first  
-if [[ -n "$(git status --porcelain)" ]]; then  
-  echo "You have local changes:"  
-  git status --short  
-  read -rp "Stage and commit these changes? [y/N] " ans  
-  if [[ "$ans" =~ ^[Yy]$ ]]; then  
-    git add .  
-    read -rp "Commit message: " msg  
-    if [[ -z "$msg" ]]; then  
-      echo "Empty commit message; aborting commit."  
-    else  
-      git commit -m "$msg"  
-    fi  
-  else  
-    echo "Skipping commit of local changes."  
+# Helper: ask for commit message and commit  
+commit_with_prompt() {  
+  echo "You have uncommitted changes."  
+  git status -sb  
+  echo  
+  
+  read -rp "Commit message (leave empty to abort): " msg  
+  if [ -z "$msg" ]; then  
+    echo "Aborting: empty commit message."  
+    return 1  
   fi  
-else  
-  echo "No local changes to commit."  
+  
+  git add .  
+  git commit -m "$msg"  
+}  
+  
+# Helper: ask whether to push  
+confirm_and_push() {  
+  echo  
+  read -rp "Push to origin/$branch? [y/N]: " ans  
+  case "$ans" in  
+    y|Y)  
+      echo "Pushing to origin/$branch…"  
+      git push origin "$branch"  
+      ;;  
+    *)  
+      echo "Not pushing."  
+      ;;  
+  esac  
+}  
+  
+echo "==> Syncing /etc/nixos ($branch)"  
+  
+# Make sure we know about remote state  
+git fetch origin >/dev/null 2>&1 || true  
+  
+# Initial state  
+dirty=false  
+if git status --porcelain | grep -q .; then  
+  dirty=true  
 fi  
   
-# 2. Pull latest from origin with rebase  
+ahead=0  
+behind=0  
+recalc_ahead_behind  
+  
+echo "   dirty=$dirty ahead=$ahead behind=$behind"  
+  
+########################################  
+# 1. Handle dirty + behind (must commit before pull)  
+########################################  
+if [ "$dirty" = true ] && [ "$behind" -gt 0 ]; then  
+  echo  
+  echo "You have uncommitted changes AND remote has new commits."  
+  echo "Git cannot pull safely with a dirty working tree."  
+  echo "We will commit your local changes first, then pull."  
+  echo  
+  
+  commit_with_prompt || exit 1  
+  dirty=false  
+  
+  # After committing, recompute ahead/behind  
+  recalc_ahead_behind  
+  echo "   After commit: dirty=$dirty ahead=$ahead behind=$behind"  
+fi  
+  
+########################################  
+# 2. Handle diverged (ahead + behind, clean)  
+########################################  
+if [ "$dirty" = false ] && [ "$ahead" -gt 0 ] && [ "$behind" -gt 0 ]; then  
+  echo  
+  echo "🤡  Well shit, you done fucked up: branch has diverged (ahead & behind)."  
+  echo "    Attempting 'git pull --rebase origin $branch' to straighten this out…"  
+  echo  
+  
+  git pull --rebase origin "$branch"  
+  
+  # After rebase, recompute ahead/behind  
+  recalc_ahead_behind  
+  echo "   After rebase: dirty=$dirty ahead=$ahead behind=$behind"  
+fi  
+  
+########################################  
+# 3. Handle dirty (only) – commit, then optionally push  
+########################################  
+if [ "$dirty" = true ]; then  
+  echo  
+  echo "State: DIRTY (no remote changes)."  
+  commit_with_prompt || exit 1  
+  
+  dirty=false  
+  recalc_ahead_behind  
+  echo "   After commit: dirty=$dirty ahead=$ahead behind=$behind"  
+  
+  if [ "$ahead" -gt 0 ]; then  
+    confirm_and_push  
+  fi  
+  
+  echo "==> Done."  
+  exit 0  
+fi  
+  
+########################################  
+# 4. Handle behind only – just pull  
+########################################  
+if [ "$behind" -gt 0 ] && [ "$ahead" -eq 0 ]; then  
+  echo  
+  echo "State: BEHIND (remote has $behind new commit(s))."  
+  echo "Pulling with rebase from origin/$branch…"  
+  git pull --rebase origin "$branch"  
+  echo "==> Done."  
+  exit 0  
+fi  
+  
+########################################  
+# 5. Handle ahead only – offer to push  
+########################################  
+if [ "$ahead" -gt 0 ] && [ "$behind" -eq 0 ]; then  
+  echo  
+  echo "State: AHEAD (you have $ahead local commit(s) not pushed)."  
+  confirm_and_push  
+  echo "==> Done."  
+  exit 0  
+fi  
+  
+########################################  
+# 6. Clean and in sync  
+########################################  
 echo  
-echo ">>> git pull --rebase origin $BRANCH"  
-if ! git pull --rebase origin "$BRANCH"; then  
-  echo "git pull --rebase failed. Resolve conflicts manually, then run this script again."  
-  cd "$orig_dir"  
-  exit 1  
-fi  
-  
-# 3. If we now have commits ahead of origin, offer to push  
-if git log --oneline "origin/$BRANCH"..HEAD | grep -q .; then  
-  echo  
-  echo "New commits to push:"  
-  git log --oneline "origin/$BRANCH"..HEAD  
-  read -rp "Push these commits to origin/$BRANCH? [y/N] " ans  
-  if [[ "$ans" =~ ^[Yy]$ ]]; then  
-    git push origin "$BRANCH"  
-  else  
-    echo "Skipping push."  
-  fi  
-else  
-  echo  
-  echo "No new commits to push."  
-fi  
-  
-cd "$orig_dir"  
-echo "Returned to $orig_dir"  
-
+echo "State: CLEAN and in sync with origin/$branch."  
+echo "Nothing to do."  
+exit 0  
+ 
