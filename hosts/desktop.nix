@@ -1,9 +1,13 @@
 { config, pkgs, lib, ... }:  
   
 {  
+  imports = [
+   ./drives/desktop-drives.nix
+  ];
+
   ############################  
   # Host identity / networking  
-  ############################  
+  ############################ 
   
   networking.hostName = "nixos-desktop";  
   

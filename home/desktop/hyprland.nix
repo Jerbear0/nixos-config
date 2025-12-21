@@ -4,8 +4,8 @@
   wayland.windowManager.hyprland.settings = {  
     # Desktop monitors (from your monitor.conf)  
     monitor = [  
-      "DP-3,3440x1440@165,0x0,auto"  
-      "DP-1,2560x1440@60,3440x-985,auto,transform,3"  
+      "DP-6,3440x1440@165,0x0,auto"  
+      "DP-4,2560x1440@60,3440x-985,auto,transform,3"  
     ];  
   
     # Desktop-specific autostart (no idle lock, different wallpaper, etc.)  
