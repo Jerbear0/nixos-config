@@ -1,0 +1,19 @@
+[2025-12-22 02:06:03.401] [info] Using configuration file /home/jay/.config/waybar/config
+[2025-12-22 02:06:03.402] [info] Unable to receive desktop appearance: GDBus.Error:org.freedesktop.DBus.Error.UnknownMethod: No such interface “org.freedesktop.portal.Settings” on object at path /org/freedesktop/portal/desktop
+[2025-12-22 02:06:03.402] [info] Using CSS file /home/jay/.config/waybar/style.css
+[2025-12-22 02:06:03.404] [info] Hyprland IPC starting
+[2025-12-22 02:06:03.404] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-12-22 02:06:03.404] [warning] module temperature: Disabling module "temperature", Can't open /sys/class/thermal/thermal_zone0/temp
+[2025-12-22 02:06:03.406] [warning] module backlight: Disabling module "backlight", No backlight found
+[2025-12-22 02:06:03.407] [warning] No batteries.
+[2025-12-22 02:06:03.407] [error] spotify stopped unexpectedly, is it endless?
+[2025-12-22 02:06:03.412] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-12-22 02:06:03.412] [warning] module temperature: Disabling module "temperature", Can't open /sys/class/thermal/thermal_zone0/temp
+[2025-12-22 02:06:03.413] [warning] module backlight: Disabling module "backlight", No backlight found
+[2025-12-22 02:06:03.414] [warning] No batteries.
+[2025-12-22 02:06:03.414] [error] spotify stopped unexpectedly, is it endless?
+[2025-12-22 02:06:03.625] [info] Bar configured (width: 1420, height: 62) for output: DP-4
+[2025-12-22 02:06:03.625] [error] Item '': No icon name or pixmap given.
+[2025-12-22 02:06:03.631] [info] Bar configured (width: 3420, height: 62) for output: DP-6
+[2025-12-22 02:06:06.384] [info] Quitting.
+[2025-12-22 02:06:06.388] [info] Hyprland IPC stopping...
