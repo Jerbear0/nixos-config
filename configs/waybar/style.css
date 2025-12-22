@@ -31,34 +31,37 @@ window#waybar.hidden {
   opacity: 0.2;
 }
 
-#hyprland-workspaces button {
-    padding: 3px 5px;  /* Adjusted padding to reduce height */
-    margin: 3px 5px;    /* Reduced margin slightly */
-    border-radius: 6px;
-    color: @foreground;
-    background-color: #111827;
-    transition: all 0.3s ease-in-out;
-    font-size: 13px;  /* Slightly smaller font size */
-}
-
-#hyprland-workspaces button.active {
-    color: @foreground;
-    background: #025939;
-}
-
-#hyprland-workspaces button:hover {
-    background: #333333;
-}
-
-#hyprland-workspaces button.urgent {
-    background-color: #eb4d4b;
-}
-
-#hyprland-workspaces {
-    background-color: #111827;
-    border-radius: 14px;
-    padding: 3px 6px;  /* Adjusted padding to reduce height */
-} 
+/* Each workspace (labels / children) */  
+#workspaces > * {  
+    padding: 2px 6px;  
+    margin: 0 3px;  
+    border-radius: 8px;  
+    background: transparent;  
+    color: #e5e7eb;  
+    opacity: 0.6;  
+}  
+  
+/* Active workspace – Waybar adds .active to the child */  
+#workspaces > .active {  
+    background: #22c55e;  
+    color: #020617;  
+    opacity: 1;  
+    box-shadow: 0 0 0 2px #22c55e40;  
+}  
+  
+/* Urgent workspace */  
+#workspaces > .urgent {  
+    background: #ef4444;  
+    color: #020617;  
+    opacity: 1;  
+}  
+  
+/* Hover (if Waybar applies :hover to them) */  
+#workspaces > *:hover {  
+    background: #4b5563;  
+    color: #e5e7eb;  
+    opacity: 1;  
+}     
 
 #window {
     background-color: #111827;
@@ -186,12 +189,12 @@ window#waybar.hidden {
 }
 
 /* If workspaces is the leftmost module, omit left margin */
-.modules-left > widget:first-child > #hyprland-workspaces {
+.modules-left > widget:first-child > #workspaces {
     margin-left: 0;
 }
 
 /* If workspaces is the rightmost module, omit right margin */
-.modules-right > widget:last-child > #hyprland-workspaces {
+.modules-right > widget:last-child > #workspaces {
     margin-right: 0;
 }
 

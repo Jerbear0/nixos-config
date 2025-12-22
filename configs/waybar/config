@@ -316,6 +316,7 @@
         "on-scroll-down": "hyprctl dispatch workspace e-1 1>/dev/null",
         "sort-by-number": true,
         "active-only": false,
+	"name":"workspaces",
     },
 
     "hyprland/window": {

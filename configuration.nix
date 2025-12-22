@@ -62,12 +62,15 @@
     discord  
     fastfetch  
     firefox  
+    gamescope
     git  
+    goverlay
     hyprutils  
     kdePackages.dolphin
     kitty 
     lshw  
     lutris  
+    mangohud
     pavucontrol
     polkit  
     primus  
@@ -80,6 +83,8 @@
     vim  
 #    VRCFT-Avalonia
     wget   
+    winetricks
+    wineWowPackages.staging
     xdg-desktop-portal-hyprland  
     xsensors
   ];  
