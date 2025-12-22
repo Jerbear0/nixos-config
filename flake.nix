@@ -11,23 +11,31 @@
     let  
       system = "x86_64-linux";  
       lib = nixpkgs.lib;  
+  
+      # NEW: overlay to expose pkgs.VRCFT-Avalonia  
+#      overlays = [  
+#        (final: prev: {  
+#          VRCFT-Avalonia = import ./pkgs/VRCFT-Avalonia.nix {  
+#            pkgs = final;  
+#          };  
+#        })  
+#      ];  
     in {  
       nixosConfigurations = {  
         nixos-laptop = lib.nixosSystem {  
           inherit system;  
   
-          # This is where we define the role for this host  
           specialArgs = {  
             hostRole = "laptop";  
           };  
   
           modules = [  
+          #  { nixpkgs.overlays = overlays; }   # NEW  
             ./configuration.nix  
             ./hosts/laptop.nix  
   
             home-manager.nixosModules.home-manager  
   
-            # Extra NixOS module to wire Home Manager for user jay  
             ({ pkgs, hostRole, ... }: {  
               home-manager.useGlobalPkgs = true;  
               home-manager.useUserPackages = true;  
@@ -40,8 +48,6 @@
           ];  
         };  
   
-        # Only keep this if you actually have ./hosts/desktop.nix  
-        # Otherwise comment this whole block out for now.  
         nixos-desktop = lib.nixosSystem {  
           inherit system;  
   
@@ -50,6 +56,7 @@
           };  
   
           modules = [  
+           # { nixpkgs.overlays = overlays; }   # NEW  
             ./configuration.nix  
             ./hosts/desktop.nix  
   
@@ -69,3 +76,4 @@
       };  
     };  
 }  
+ 

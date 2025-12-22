@@ -4,6 +4,7 @@
   imports = [   
     ./modules/hardware/vr.nix  
     ./modules/baballonia.nix  
+#    ./modules/VRCFT-Avalonia.nix
   ];  
   
   ############################  
@@ -77,6 +78,7 @@
     steam-run  
     tmux  
     vim  
+#    VRCFT-Avalonia
     wget   
     xdg-desktop-portal-hyprland  
     xsensors
@@ -132,6 +134,7 @@
     localNetworkGameTransfers.openFirewall = true;  
   };  
   
+#  programs.VRCFT-Avalonia.enable = true; 
   programs.baballonia.enable = true;  
   programs.steam.gamescopeSession.enable = true;  
   
