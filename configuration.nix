@@ -3,8 +3,8 @@
 {  
   imports = [   
     ./modules/hardware/vr.nix  
-    ./modules/baballonia.nix  
-#    ./modules/VRCFT-Avalonia.nix
+    ./modules/baballonia.nix 
+    ./modules/vrcfacetracking.nix 
   ];  
   
   ############################  
@@ -44,7 +44,7 @@
   ############################  
   
   nix.settings.experimental-features = [ "nix-command" "flakes" ];  
-  
+#  nix.settings.sandbox = false;  
   nixpkgs.config = {  
     allowUnfree = true;  
     nvidia.acceptLicense = true;  
@@ -53,41 +53,44 @@
   ############################  
   # System packages  
   ############################  
-  
+
   environment.systemPackages = with pkgs; [  
-    alsa-utils
+    alsa-utils  
+    appimage-run  
     btop  
-    brightnessctl
+    brightnessctl  
     bumblebee  
+    cabextract  
     discord  
     fastfetch  
     firefox  
-    gamescope
+    gamescope  
     git  
-    goverlay
+    goverlay  
     hyprutils  
-    kdePackages.dolphin
-    kitty 
+    kdePackages.dolphin  
+    kitty  
     lshw  
     lutris  
-    mangohud
-    pavucontrol
+    mangohud  
+    pavucontrol  
     polkit  
     primus  
     protonup-qt  
     psmisc  
-    spotify
+    p7zip  
+    spotify  
     steam  
     steam-run  
     tmux  
     vim  
-#    VRCFT-Avalonia
-    wget   
-    winetricks
-    wineWowPackages.staging
+    wget  
+    winetricks  
+    wineWowPackages.staging  
     xdg-desktop-portal-hyprland  
-    xsensors
+    xsensors  
   ];  
+  
   
   ############################  
   # Fonts  
@@ -107,7 +110,7 @@
   # Programs  
   ############################  
   
-  programs.hyprland.enable = true;  
+  programs.hyprland.enable = true;
   
   programs.steam = {  
     enable = true;  
@@ -138,11 +141,11 @@
     dedicatedServer.openFirewall = true;  
     localNetworkGameTransfers.openFirewall = true;  
   };  
-  
-#  programs.VRCFT-Avalonia.enable = true; 
+ 
+  programs.vrcfacetracking.enable = true; 
   programs.baballonia.enable = true;  
   programs.steam.gamescopeSession.enable = true;  
-  
+ 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";  
 
   ############################  
