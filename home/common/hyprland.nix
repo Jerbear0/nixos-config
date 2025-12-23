@@ -36,7 +36,8 @@ in
       "$filemanager" = "dolphin";  
       "$applauncher" = "wofi --show drun";  
       "$mainMod" = "SUPER";  
-  
+      "$facetracking" = "/etc/nixos/modules/facetracking";
+
       # ===== Environment =====  
       envd = [  
         "HYPRCURSOR_SIZE,24"  
@@ -173,6 +174,7 @@ in
         "$mainMod, E, exec, $filemanager"  
         "$mainMod, SPACE, exec, $applauncher"  
         "$mainMod, W, exec, firefox"  
+        "Control&ALT, V, execr, $facetracking" 
   
         # Window management  
         "$mainMod, Q, killactive,"  
