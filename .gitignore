@@ -2,4 +2,5 @@ secrets/
 result  
 *.swp  
 *.tmp  
-EOF 
+EOF
+.abacus.donotdelete 
