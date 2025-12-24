@@ -146,7 +146,7 @@
   programs.baballonia.enable = true;  
   programs.steam.gamescopeSession.enable = true;  
  
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";  
+  environment.sessionVariables.NIXOS_OZONE_WL = "0";  
 
   ############################  
   # Audio (PipeWire + WirePlumber)  
