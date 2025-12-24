@@ -80,7 +80,8 @@
     psmisc  
     p7zip  
     spotify  
-    steam  
+    steam 
+    steamcmd 
     steam-run  
     tmux  
     vim  
@@ -140,7 +141,11 @@
     remotePlay.openFirewall = true;  
     dedicatedServer.openFirewall = true;  
     localNetworkGameTransfers.openFirewall = true;  
-  };  
+  }; 
+    hardware.opengl = {  
+      enable = true;  
+      driSupport32Bit = true;  
+    };   
 
   programs.vrcft-avalonia.enable = true;    
   programs.baballonia.enable = true;  
