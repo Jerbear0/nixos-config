@@ -3,17 +3,21 @@
   
   inputs = {  
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";  
+    nixpkgs-xr.url = "github:nix-community/nixpkgs-xr";  
     home-manager.url = "github:nix-community/home-manager/release-25.11";  
     home-manager.inputs.nixpkgs.follows = "nixpkgs";  
   };  
   
-  outputs = { self, nixpkgs, home-manager, ... }:  
+  outputs = { self, nixpkgs, nixpkgs-xr, home-manager, ... }:  
     let  
       system = "x86_64-linux";  
       lib = nixpkgs.lib;  
       pkgs = import nixpkgs {  
         inherit system;  
         config.allowUnfree = true;  
+      };  
+      pkgs-xr = import nixpkgs-xr {  
+        inherit system;  
       };  
     in {  
       nixosConfigurations = {  
@@ -22,6 +26,7 @@
   
           specialArgs = {  
             hostRole = "laptop";  
+            inherit pkgs-xr;  
           };  
   
           modules = [  
@@ -30,13 +35,13 @@
   
             home-manager.nixosModules.home-manager  
   
-            ({ pkgs, hostRole, ... }: {  
+            ({ pkgs, hostRole, pkgs-xr, ... }: {  
               home-manager.useGlobalPkgs = true;  
               home-manager.useUserPackages = true;  
   
               home-manager.users.jay = { pkgs, ... }:  
                 import ./home.nix {  
-                  inherit pkgs hostRole;  
+                  inherit pkgs hostRole pkgs-xr;  
                 };  
             })  
           ];  
@@ -47,6 +52,7 @@
   
           specialArgs = {  
             hostRole = "desktop";  
+            inherit pkgs-xr;  
           };  
   
           modules = [  
@@ -55,17 +61,17 @@
   
             home-manager.nixosModules.home-manager  
   
-            ({ pkgs, hostRole, ... }: {  
+            ({ pkgs, hostRole, pkgs-xr, ... }: {  
               home-manager.useGlobalPkgs = true;  
               home-manager.useUserPackages = true;  
   
               home-manager.users.jay = { pkgs, ... }:  
                 import ./home.nix {  
-                  inherit pkgs hostRole;  
+                  inherit pkgs hostRole pkgs-xr;  
                 };  
             })  
           ];  
         };  
       };  
     };  
-}  
+}   
