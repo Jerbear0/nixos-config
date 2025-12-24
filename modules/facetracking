@@ -1,7 +1,11 @@
-#!/usr/bin/env bash   
+#!/usr/bin/env bash  
+set -euo pipefail  
   
-# Run baballonia-uvc  
-baballonia-uvc  
+# Start baballonia-uvc detached  
+nohup baballonia-uvc >/tmp/baballonia-uvc.log 2>&1 &  
   
-# Run the VRCFaceTracking AppImage  
-vrcft-avalonia 
+# Start VRCFaceTracking.Avalonia detached  
+nohup vrcft-avalonia >/tmp/vrcft-avalonia.log 2>&1 &  
+  
+# Script can exit immediately; both processes keep running  
+exit 0   
