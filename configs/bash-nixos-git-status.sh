@@ -48,17 +48,14 @@ nixos_git_status() {
     color_bg="152;151;26"     # green  
   fi  
   
+  # NOTE: no leading newline, just a leading space and the pill  
   printf " \e[1;48;2;%sm[%s]\e[0m" "$color_bg;$color_fg" "$label"  
   
   cd "$oldpwd" >/dev/null 2>&1 || true  
 }  
   
-__nixos_prompt_hook() {  
+# Wrapper that will be called from PROMPT_COMMAND in bashrc  
+nixos_status_segment() {  
   nixos_git_status  
 }  
-  
-if [ -n "$PROMPT_COMMAND" ]; then  
-  PROMPT_COMMAND="__nixos_prompt_hook; $PROMPT_COMMAND"  
-else  
-  PROMPT_COMMAND="__nixos_prompt_hook"  
-fi    
+

@@ -121,7 +121,7 @@
   programs.bash = {  
     enable = true;  
     enableCompletion = true;  
-
+  
     # Force Starship to use our Git-tracked config  
     sessionVariables = {  
       STARSHIP_CONFIG = "/etc/nixos/configs/starship.toml";  
@@ -129,14 +129,20 @@
   
     bashrcExtra = ''  
       export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"  
-
-      # Load NixOS /etc/nixos git-status prompt hook  
+  
+      # Load NixOS /etc/nixos git-status segment (no PROMPT_COMMAND hacks)  
       if [ -f /etc/nixos/configs/bash-nixos-git-status.sh ]; then  
         . /etc/nixos/configs/bash-nixos-git-status.sh  
       fi  
-    '';   
- 
-    initExtra = ''  
+  
+      # Initialize Starship manually  
+      eval "$(starship init bash)"  
+  
+      # Compose: NixOS status segment + Starship prompt  
+      # This is the ONLY PROMPT_COMMAND we use.  
+      PROMPT_COMMAND='PS1="$(nixos_status_segment)$(starship prompt)"'  
+  
+      # Optional: run fastfetch when shell starts  
       fastfetch  
     '';  
   
@@ -151,14 +157,15 @@
   ############################  
   # Starship prompt  
   ############################  
-   
+  
+  # We initialize Starship ourselves in bashrcExtra, so no automatic integration  
   programs.starship = {  
     enable = true;  
-    enableBashIntegration = true;  
+    enableBashIntegration = false;  
   };  
   
   # Symlink /etc/nixos/configs/starship.toml -> ~/.config/starship.toml  
-  home.file.".config/starship.toml".source = /etc/nixos/configs/starship.toml;  
+  home.file.".config/starship.toml".source = /etc/nixos/configs/starship.toml; 
  
   ############################  
   # Auto git pull service  
