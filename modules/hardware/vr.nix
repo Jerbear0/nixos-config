@@ -54,7 +54,7 @@
     monado = {
       environment = {
         XRT_LOG = "error";
-        AMD_VULKAN_ICD = "RADV";
+        # AMD_VULKAN_ICD = "RADV";
         XRT_COMPOSITOR_COMPUTE = "1";
         STEAMVR_LH_ENABLE = "1";
         # VIT_SYSTEM_LIBRARY_PATH = "${pkgs.basalt-monado}/lib/libbasalt.so";
