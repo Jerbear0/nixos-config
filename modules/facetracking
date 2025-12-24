@@ -4,4 +4,4 @@
 baballonia-uvc  
   
 # Run the VRCFaceTracking AppImage  
-/etc/nixos/pkgs/VRCFaceTracking.Avalonia.1.1.1.0.AppImage 
+vrcft-avalonia 

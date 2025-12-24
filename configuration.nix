@@ -3,8 +3,8 @@
 {  
   imports = [   
     ./modules/hardware/vr.nix  
-    ./modules/baballonia.nix 
-    ./modules/vrcfacetracking.nix 
+    ./modules/baballonia.nix  
+    ./modules/vrcft-avalonia.nix
   ];  
   
   ############################  
@@ -88,7 +88,7 @@
     winetricks  
     wineWowPackages.staging  
     xdg-desktop-portal-hyprland  
-    xsensors  
+    xsensors   
   ];  
   
   
@@ -141,8 +141,8 @@
     dedicatedServer.openFirewall = true;  
     localNetworkGameTransfers.openFirewall = true;  
   };  
- 
-  programs.vrcfacetracking.enable = true; 
+
+  programs.vrcft-avalonia.enable = true;    
   programs.baballonia.enable = true;  
   programs.steam.gamescopeSession.enable = true;  
  
