@@ -1,11 +1,16 @@
 #!/usr/bin/env bash  
-set -euo pipefail  
-  
-# Start baballonia-uvc detached  
-nohup baballonia-uvc >/tmp/baballonia-uvc.log 2>&1 &  
+set -euo pipefail    
   
 # Start VRCFaceTracking.Avalonia detached  
-nohup vrcft-avalonia >/tmp/vrcft-avalonia.log 2>&1 &  
-  
+nohup vrcft-avalonia >/tmp/vrcft-avalonia.log 2>&1 || true & 
+disown
+
+# Waiting before launching Baballonia so OSC doesn't freak out...
+sleep 6
+
+# Start baballonia-uvc detached
+nohup baballonia-uvc >/tmp/baballonia-uvc.log 2>&1 || true &
+disown
+
 # Script can exit immediately; both processes keep running  
 exit 0   
