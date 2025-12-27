@@ -61,6 +61,7 @@
     brightnessctl  
     bumblebee  
     cabextract  
+    darktable
     discord  
     fastfetch  
     firefox  
