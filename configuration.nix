@@ -73,7 +73,8 @@
     kitty  
     lshw  
     lutris  
-    mangohud  
+    mangohud
+    obs-studio  
     pavucontrol  
     polkit  
     primus  
