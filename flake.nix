@@ -12,7 +12,24 @@ outputs = { self, nixpkgs, nixpkgs-xr, home-manager, ... }:
   let  
     system = "x86_64-linux";  
     lib = nixpkgs.lib;  
-  in {  
+  
+    # A pkgs instance for building flake-level packages  
+    pkgs = import nixpkgs {  
+      inherit system;  
+      config = {  
+        allowUnfree = true;  
+        # add any other nixpkgs.config options you want globally  
+      };  
+    };  
+  in { 
+    # New: expose discord-music-presence as a flake package  
+    packages.${system}.discord-music-presence =  
+      import ./pkgs/discord-music-presence.nix { inherit pkgs lib; };  
+  
+    # Optional convenience:  
+    # defaultPackage.${system} = self.packages.${system}.discord-music-presence;  
+  
+ 
     nixosConfigurations = {  
       nixos-desktop = lib.nixosSystem {  
         inherit system;  

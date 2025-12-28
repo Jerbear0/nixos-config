@@ -18,6 +18,7 @@
       "systemctl --user import-environment &"  
       "hash dbus-update-activation-environment 2>/dev/null &"  
       "dbus-update-activation-environment --systemd &"  
+      "discord-music-presence &"
     ];  
   
     # Desktop-specific binds (screenshots, etc.)  
