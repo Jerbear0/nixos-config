@@ -73,8 +73,7 @@
     kitty  
     lshw  
     lutris  
-    mangohud
-    obs-studio  
+    mangohud 
     pavucontrol  
     polkit  
     primus  
@@ -147,31 +146,23 @@
     localNetworkGameTransfers.openFirewall = true;  
   };
 
-  programs.obs-studio = {
-    enable = true;
+  programs.obs-studio = {  
+    enable = true;     
 
-    # optional Nvidia hardware acceleration
-    package = (
-      pkgs.obs-studio.override {
-        cudaSupport = true;
-      }
-    );
-
-    plugins = with pkgs.obs-studio-plugins; [
-      wlrobs
-      obs-backgroundremoval
-      obs-pipewire-audio-capture
-      #obs-vaapi #optional AMD hardware acceleration
-      obs-gstreamer
-      obs-vkcapture
-    ];
+  package = pkgs.obs-studio.override {  
+    cudaSupport = true;  
   };
+  
+    plugins = with pkgs.obs-studio-plugins; [  
+      wlrobs  
+      obs-backgroundremoval  
+      obs-pipewire-audio-capture  
+      obs-gstreamer  
+      obs-vkcapture  
+      # obs-vaapi is not needed for Nvidia  
+    ];  
+  };  
  
-    hardware.graphics = {  
-      enable = true;  
-      enable32Bit = true;  
-    };   
-
   programs.vrcft-avalonia.enable = true;    
   programs.baballonia.enable = true;  
   programs.steam.gamescopeSession.enable = true;  
