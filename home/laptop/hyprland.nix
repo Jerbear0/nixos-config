@@ -17,6 +17,7 @@
       "hash dbus-update-activation-environment 2>/dev/null &"  
       "dbus-update-activation-environment --systemd &"  
       "swayidle -w timeout 300 'swaylock -f -c 000000' before-sleep 'swaylock -f -c 000000'"  
+      "discord-music-presence &"
     ];  
   
     # Laptop-specific binds (screenshots, etc.)  

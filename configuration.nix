@@ -4,7 +4,7 @@
   imports = [   
     ./modules/hardware/vr.nix  
     ./modules/baballonia.nix  
-    ./modules/vrcft-avalonia.nix
+    ./modules/vrcft-avalonia.nix 
   ];  
   
   ############################  
@@ -92,6 +92,8 @@
     wineWowPackages.staging  
     xdg-desktop-portal-hyprland  
     xsensors   
+
+  (callPackage ./pkgs/discord-music-presence.nix { }) 
   ];  
   
   
@@ -165,9 +167,9 @@
     ];
   };
  
-    hardware.opengl = {  
+    hardware.graphics = {  
       enable = true;  
-      driSupport32Bit = true;  
+      enable32Bit = true;  
     };   
 
   programs.vrcft-avalonia.enable = true;    
