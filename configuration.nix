@@ -1,10 +1,11 @@
 { config, pkgs, lib, ... }:  
-  
+ 
 {  
   imports = [   
     ./modules/hardware/vr.nix  
     ./modules/baballonia.nix  
     ./modules/vrcft-avalonia.nix 
+    ./modules/vrchat.nix  
   ];  
   
   ############################  
@@ -48,8 +49,17 @@
   nixpkgs.config = {  
     allowUnfree = true;  
     nvidia.acceptLicense = true;  
-  };  
+  };   
+
+  xdg.portal = {  
+    enable = true;  
   
+    extraPortals = with pkgs; [  
+      xdg-desktop-portal-hyprland  
+      xdg-desktop-portal-gtk  
+    ];  
+  };  
+
   ############################  
   # System packages  
   ############################  
@@ -79,17 +89,20 @@
     primus  
     protonup-qt  
     psmisc  
-    p7zip  
+    p7zip 
+    python3 
     spotify  
     steam 
     steamcmd 
-    steam-run  
+    steam-run
+    unityhub  
     tmux  
     vim  
     wget  
     winetricks  
     wineWowPackages.staging  
     xdg-desktop-portal-hyprland  
+    xdg-utils
     xsensors   
 
   (callPackage ./pkgs/discord-music-presence.nix { }) 
@@ -114,7 +127,7 @@
   # Programs  
   ############################  
   
-  programs.hyprland.enable = true;
+  programs.hyprland.enable = true; 
   
   programs.steam = {  
     enable = true;  
@@ -163,10 +176,11 @@
     ];  
   };  
  
+  programs.steam.gamescopeSession.enable = true;
   programs.vrcft-avalonia.enable = true;    
   programs.baballonia.enable = true;  
-  programs.steam.gamescopeSession.enable = true;  
- 
+  programs.vrchat.enable = true;    
+
   environment.sessionVariables.NIXOS_OZONE_WL = "0";  
 
   ############################  
@@ -191,6 +205,7 @@
   
   services.udev.enable = true;  
   services.openssh.enable = true;   
+  services.gnome.gnome-keyring.enable = true; 
   
   ############################  
   # System state version  
