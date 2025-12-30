@@ -4,4 +4,4 @@ result
 *.tmp  
 EOF
 .abacus.donotdelete
-#pkgs/alcom-1.1.5-x86_64.AppImage 
+pkgs/alcom-1.1.5-x86_64.AppImage 
