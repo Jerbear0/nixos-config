@@ -3,4 +3,5 @@ result
 *.swp  
 *.tmp  
 EOF
-.abacus.donotdelete 
+.abacus.donotdelete
+pkgs/alcom-1.1.5-x86_64.AppImage 
