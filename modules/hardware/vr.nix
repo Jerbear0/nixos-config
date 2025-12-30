@@ -53,10 +53,11 @@
   systemd.user.services = {
     monado = {
       environment = {
-        XRT_LOG = "error";
+        XRT_LOG = "debug";
         # AMD_VULKAN_ICD = "RADV";
         XRT_COMPOSITOR_COMPUTE = "1";
         STEAMVR_LH_ENABLE = "1";
+        XRT_COMPOSITOR_DESIRED_MODE = "1"; # ensure 90 Hz  
         # VIT_SYSTEM_LIBRARY_PATH = "${pkgs.basalt-monado}/lib/libbasalt.so";
         XRT_COMPOSITOR_SCALE_PERCENTAGE="140";
         # XRT_COMPOSITOR_SCALE_PERCENTAGE="160";
