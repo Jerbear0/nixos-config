@@ -81,6 +81,7 @@
     hyprutils  
     kdePackages.dolphin  
     kitty  
+    logseq
     lshw  
     lutris  
     mangohud 
