@@ -87,7 +87,8 @@
     mangohud 
     pavucontrol  
     polkit  
-    primus  
+    primus
+    prismlauncher  
     protonup-qt  
     psmisc  
     p7zip 
