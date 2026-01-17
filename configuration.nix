@@ -84,7 +84,8 @@
     logseq
     lshw  
     lutris  
-    mangohud 
+    mangohud
+    nmap 
     pavucontrol  
     polkit  
     primus
