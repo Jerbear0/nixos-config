@@ -101,6 +101,8 @@
     unityhub  
     tmux  
     vim  
+    vulkan-loader
+    vulkan-validation-layers
     wget  
     winetricks  
     wineWowPackages.staging  
