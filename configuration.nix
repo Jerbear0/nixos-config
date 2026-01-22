@@ -102,6 +102,7 @@
     tmux  
     vim  
     vulkan-loader
+    vulkan-tools
     vulkan-validation-layers
     wget  
     winetricks  
