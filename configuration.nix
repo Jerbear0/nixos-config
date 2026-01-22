@@ -90,6 +90,7 @@
     polkit  
     primus
     prismlauncher  
+    protonplus
     protonup-qt  
     psmisc  
     p7zip 
