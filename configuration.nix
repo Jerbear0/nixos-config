@@ -53,10 +53,9 @@
 
   xdg.portal = {  
     enable = true;  
-  
-    extraPortals = with pkgs; [  
-      xdg-desktop-portal-hyprland  
-      xdg-desktop-portal-gtk  
+    xdgOpenUsePortal = false;  
+    extraPortals = [  
+      pkgs.xdg-desktop-portal-hyprland    
     ];  
   };  
 
@@ -224,8 +223,8 @@
   
   services.udev.enable = true;  
   services.openssh.enable = true;   
-  services.gnome.gnome-keyring.enable = true; 
-  
+  services.gnome.gnome-keyring.enable = true;  
+ 
   ############################  
   # System state version  
   ############################  
