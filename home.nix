@@ -151,6 +151,7 @@
       ns = "/etc/nixos/gitpullpush";  
       rs-laptop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-laptop --impure";  
       rs-desktop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-desktop --impure";  
+      openuri = "dbus-monitor --session interface=org.freedesktop.portal.OpenURI";
     };  
   };  
   
