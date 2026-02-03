@@ -80,7 +80,8 @@
     goverlay  
     hyprutils  
     kdePackages.dolphin  
-    kitty  
+    kitty 
+    libreoffice 
     logseq
     lshw  
     lutris  
