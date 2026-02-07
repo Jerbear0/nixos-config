@@ -84,30 +84,52 @@ rs-laptop
 
 ## Repo Owner: SSH Setup for Push Access
 
-After running `setup.sh`, configure SSH to push changes:
+After running `setup.sh`, configure SSH and git to push changes:
 
-1. **Generate SSH key:**
+1. **Create git.nix (optional - for declarative git config):**
+   ```bash
+   mkdir -p /etc/nixos/secrets
+   cat > /etc/nixos/secrets/git.nix << 'EOF'
+   {
+     programs.git = {
+       enable = true;
+       userName = "Your Name";
+       userEmail = "your@email.com";
+       
+       extraConfig = {
+         init.defaultBranch = "main";
+         pull.rebase = true;
+       };
+     };
+   }
+   EOF
+   chmod 600 /etc/nixos/secrets/git.nix
+   ```
+   
+   Note: This is optional. Without it, just use `git config` manually.
+
+2. **Generate SSH key:**
    ```bash
    ssh-keygen -t ed25519 -C "your@email.com"
    ```
 
-2. **Copy your public key:**
+3. **Copy your public key:**
    ```bash
    cat ~/.ssh/id_ed25519.pub
    ```
 
-3. **Add to GitHub:**
+4. **Add to GitHub:**
    - Go to https://github.com/settings/keys
    - Click "New SSH key"
    - Paste the public key and save
 
-4. **Switch repo to SSH:**
+5. **Switch repo to SSH:**
    ```bash
    cd /etc/nixos
    git remote set-url origin git@github.com:Jerbear0/nixos-config.git
    ```
 
-5. **Test connection:**
+6. **Test connection:**
    ```bash
    ssh -T git@github.com
    ```
