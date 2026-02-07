@@ -141,8 +141,11 @@
       # Compose: NixOS status segment + Starship prompt  
       # This is the ONLY PROMPT_COMMAND we use.  
       PROMPT_COMMAND='PS1="$(nixos_status_segment)$(starship prompt)"'  
+
+      # Ignore dups of commands in history
+      HISTCONTROL=ignoredups:erasedups
   
-      # Optional: run fastfetch when shell starts  
+      # Put commands to run on opening terminal down here
       fastfetch  
     '';  
   
