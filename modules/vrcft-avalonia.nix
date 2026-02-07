@@ -30,5 +30,10 @@ in
     environment.systemPackages = [  
       vrcft-script  
     ];  
+
+    systemd.tmpfiles.rules = [
+      "d /home/jay/.config/VRCFaceTracking 0755 jay users -"
+    ];
+
   };  
 }  
