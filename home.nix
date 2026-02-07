@@ -4,8 +4,8 @@
   imports = [  
     ./home/common/hyprland.nix  
   ]  
-    ++ (if builtins.pathExists /etc/nixos/secrets/git.nix  
-        then [ /etc/nixos/secrets/git.nix ]  
+    ++ (if builtins.pathExists ./secrets/git.nix  
+        then [ ./secrets/git.nix ]  
         else [])  
     ++ (if hostRole == "laptop" then [ ./home/laptop/hyprland.nix ]  
         else if hostRole == "desktop" then [ ./home/desktop/hyprland.nix ]  
@@ -152,8 +152,8 @@
     shellAliases = {  
       lsa = "ls -al";  
       ns = "/etc/nixos/gitpullpush";  
-      rs-laptop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-laptop --impure";  
-      rs-desktop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-desktop --impure";  
+      rs-laptop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-laptop";  
+      rs-desktop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-desktop";  
       openuri = "dbus-monitor --session interface=org.freedesktop.portal.OpenURI";
     };  
   };  

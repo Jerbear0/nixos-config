@@ -26,6 +26,10 @@ in
       baballonia-uvc-fixed  
     ];  
   
+    systemd.tmpfiles.rules = [
+      "d /home/jay/ProjectBabble 0755 jay users -"
+    ];
+
     environment.etc."xdg/share/applications/baballonia-uvc.desktop".text = ''  
       [Desktop Entry]  
       Name=Baballonia (with Libuvc)  
