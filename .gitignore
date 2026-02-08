@@ -4,5 +4,3 @@ result
 *.tmp  
 EOF
 pkgs/alcom-1.1.5-x86_64.AppImage
-# Hardware configs (generated per-machine, don't commit)
-hosts/drives/*-drives.nix
