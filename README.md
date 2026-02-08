@@ -151,3 +151,10 @@ Check: `systemctl status systemd-tmpfiles-setup.service`
 ## Credits
 
 Built with [NixOS](https://nixos.org/), [Home Manager](https://github.com/nix-community/home-manager), [Hyprland](https://hyprland.org/), and [nixpkgs-xr](https://github.com/nix-community/nixpkgs-xr).
+
+### Custom Packages
+
+- [Baballonia](https://github.com/Project-Babble/Baballonia) - VR eye and face tracking for Bigscreen Beyond
+- [VRCFaceTracking](https://github.com/benaclejames/VRCFaceTracking) - Face tracking for VRChat
+- [ALCOM](https://github.com/vrc-get/vrc-get) - VRChat package manager
+- [discord-music-presence](https://github.com/ungive/discord-music-presence) - Discord Rich Presence for music players
