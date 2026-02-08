@@ -338,6 +338,9 @@ if [[ "$ALL_PRESENT" != "true" ]]; then
     exit 1
 fi
 
+# Make facetracking script executable
+chmod +x modules/facetracking 2>/dev/null || true
+
 # ============================================================================
 # STEP 5: Ready to Build
 # ============================================================================
