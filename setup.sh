@@ -282,7 +282,7 @@ else
 fi
 
 # ============================================================================
-# STEP 4: Verify AppImages
+# STEP 4: Verify Required Files
 # ============================================================================
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -292,12 +292,16 @@ echo
 
 REQUIRED_FILES=(
     "pkgs/VRCFaceTracking.Avalonia.1.1.1.0.AppImage"
-    "pkgs/alcom-1.1.5-x86_64.AppImage"
     "pkgs/Baballonia.LibuvcCapture.dll"
+)
+
+OPTIONAL_FILES=(
+    "pkgs/alcom-1.1.5-x86_64.AppImage"
 )
 
 ALL_PRESENT=true
 
+info "Checking required files..."
 for file in "${REQUIRED_FILES[@]}"; do
     if [ -f "$file" ]; then
         success "$file exists"
@@ -312,11 +316,26 @@ for file in "${REQUIRED_FILES[@]}"; do
 done
 
 echo
+info "Checking optional files..."
+for file in "${OPTIONAL_FILES[@]}"; do
+    if [ -f "$file" ]; then
+        success "$file exists"
+        # Make executable if it's an AppImage
+        if [[ "$file" == *.AppImage ]]; then
+            chmod +x "$file"
+        fi
+    else
+        info "$file not found (optional - download if needed)"
+        info "  Download from: https://github.com/vrc-get/vrc-get/releases"
+    fi
+done
+
+echo
 
 if [[ "$ALL_PRESENT" != "true" ]]; then
-    warn "Some required files are missing!"
-    warn "Make sure they're committed to your git repo"
-    warn "If they're too large, you'll need to download them manually"
+    error "Some required files are missing!"
+    error "Make sure they're committed to your git repo or download them manually"
+    exit 1
 fi
 
 # ============================================================================
