@@ -62,25 +62,22 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo
 
 DRIVES_FILE="hosts/drives/${HOST}-drives.nix"
-DRIVES_BACKUP="hosts/drives/${HOST}-drives.nix.backup"
+DRIVES_TEMPLATE="hosts/drives/${HOST}-drives.nix.template"
 
 # Ensure the drives directory exists
 mkdir -p hosts/drives
 
-warn "Your current hardware config will be backed up to: $DRIVES_BACKUP"
+warn "Hardware configuration will be generated for this machine"
+if [ -f "$DRIVES_FILE" ]; then
+    warn "Existing $DRIVES_FILE will be overwritten (not in git)"
+fi
 echo
 
-read -p "Generate new hardware configuration? [Y/n]: " gen_hw
+read -p "Generate hardware configuration now? [Y/n]: " gen_hw
 gen_hw=${gen_hw:-Y}
 
 if [[ "$gen_hw" =~ ^[Yy]$ ]]; then
     info "Generating hardware configuration..."
-    
-    # Backup existing drives file
-    if [ -f "$DRIVES_FILE" ]; then
-        cp "$DRIVES_FILE" "$DRIVES_BACKUP"
-        success "Backed up existing configuration"
-    fi
     
     # Generate new hardware config
     sudo nixos-generate-config --show-hardware-config > /tmp/new-hardware.nix
@@ -90,10 +87,16 @@ if [[ "$gen_hw" =~ ^[Yy]$ ]]; then
     sudo chown jay:users "$DRIVES_FILE"
     
     success "Hardware configuration generated at: $DRIVES_FILE"
-    warn "IMPORTANT: Keep $DRIVES_BACKUP as a backup of the repo's original config"
+    info "This file is gitignored - it's specific to this machine"
 else
-    info "Skipping hardware configuration generation"
-    warn "Make sure to manually update UUIDs in $DRIVES_FILE if needed"
+    if [ -f "$DRIVES_TEMPLATE" ]; then
+        warn "Using template file. You'll need to update UUIDs manually in $DRIVES_FILE"
+        cp "$DRIVES_TEMPLATE" "$DRIVES_FILE"
+    else
+        error "No hardware config exists and generation was skipped!"
+        error "You must either generate it now or manually create $DRIVES_FILE"
+        exit 1
+    fi
 fi
 
 echo
@@ -109,46 +112,166 @@ if [[ "$HOST" == "laptop" ]]; then
     echo
     
     WIFI_FILE="secrets/wifi-laptop.nix"
+    mkdir -p secrets
     
-    if [ -f "$WIFI_FILE" ]; then
-        info "WiFi configuration already exists: $WIFI_FILE"
-        read -p "Overwrite it? [y/N]: " overwrite_wifi
-        overwrite_wifi=${overwrite_wifi:-N}
-        
-        if [[ ! "$overwrite_wifi" =~ ^[Yy]$ ]]; then
-            info "Keeping existing WiFi configuration"
-            echo
-        else
-            rm "$WIFI_FILE"
+    # Function to parse existing networks from the file
+    parse_networks() {
+        if [ ! -f "$WIFI_FILE" ]; then
+            echo ""
+            return
         fi
-    fi
+        # Extract network SSIDs (lines with = {)
+        grep -oP '"\K[^"]+(?=" = \{)' "$WIFI_FILE" 2>/dev/null || echo ""
+    }
     
-    if [ ! -f "$WIFI_FILE" ]; then
-        info "Creating WiFi configuration..."
-        mkdir -p secrets
+    # Function to scan for WiFi networks
+    scan_wifi() {
+        info "Scanning for WiFi networks..."
+        # Create temporary shell with nmcli
+        nix-shell -p networkmanager --run "nmcli -t -f SSID dev wifi list" 2>/dev/null | grep -v '^$' | sort -u
+    }
+    
+    # Function to add a network
+    add_network() {
+        echo
+        read -p "Scan for available networks? [Y/n]: " do_scan
+        do_scan=${do_scan:-Y}
         
-        read -p "Enter your WiFi SSID: " wifi_ssid
-        read -sp "Enter your WiFi password: " wifi_pass
+        if [[ "$do_scan" =~ ^[Yy]$ ]]; then
+            available_networks=$(scan_wifi)
+            if [ -n "$available_networks" ]; then
+                echo
+                echo "Available networks:"
+                echo "$available_networks" | nl
+                echo
+                read -p "Enter SSID from list (or type manually): " wifi_ssid
+            else
+                warn "No networks found or scan failed"
+                read -p "Enter WiFi SSID manually: " wifi_ssid
+            fi
+        else
+            read -p "Enter WiFi SSID: " wifi_ssid
+        fi
+        
+        read -sp "Enter WiFi password: " wifi_pass
         echo
         
-        cat > "$WIFI_FILE" << WIFIEOF
+        # If file doesn't exist, create it
+        if [ ! -f "$WIFI_FILE" ]; then
+            cat > "$WIFI_FILE" << WIFIEOF
 {
   networks = {
     "$wifi_ssid" = {
       psk = "$wifi_pass";
     };
-    # Add more networks here as needed:
-    # "OtherNetwork" = {
-    #   psk = "other-password";
-    # };
   };
 }
 WIFIEOF
+            chmod 600 "$WIFI_FILE"
+            success "WiFi configuration created with network: $wifi_ssid"
+        else
+            # Add to existing file (before the closing braces)
+            # Remove last two lines (closing braces), add new network, then add braces back
+            head -n -2 "$WIFI_FILE" > "${WIFI_FILE}.tmp"
+            cat >> "${WIFI_FILE}.tmp" << WIFIEOF
+    "$wifi_ssid" = {
+      psk = "$wifi_pass";
+    };
+  };
+}
+WIFIEOF
+            mv "${WIFI_FILE}.tmp" "$WIFI_FILE"
+            chmod 600 "$WIFI_FILE"
+            success "Added network: $wifi_ssid"
+        fi
+    }
+    
+    # Function to remove a network
+    remove_network() {
+        local networks=($(parse_networks))
+        local num_networks=${#networks[@]}
         
-        chmod 600 "$WIFI_FILE"
-        success "WiFi configuration created: $WIFI_FILE"
+        if [ $num_networks -eq 0 ]; then
+            warn "No networks to remove"
+            return
+        fi
+        
         echo
+        echo "Current networks:"
+        for i in "${!networks[@]}"; do
+            echo "$((i+1)). ${networks[$i]}"
+        done
+        echo
+        
+        if [ $num_networks -eq 1 ]; then
+            read -p "Remove '${networks[0]}'? [y/N]: " confirm
+            if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                rm "$WIFI_FILE"
+                success "Removed all networks. File deleted."
+            else
+                info "Keeping network"
+            fi
+        else
+            read -p "Enter number to remove (1-$num_networks) or 0 to cancel: " choice
+            if [ "$choice" -gt 0 ] && [ "$choice" -le $num_networks ]; then
+                local network_to_remove="${networks[$((choice-1))]}"
+                # Remove the network block from the file
+                sed -i "/\"$network_to_remove\" = {/,/};/d" "$WIFI_FILE"
+                success "Removed network: $network_to_remove"
+            else
+                info "Cancelled"
+            fi
+        fi
+    }
+    
+    # Main WiFi configuration logic
+    if [ -f "$WIFI_FILE" ]; then
+        networks=($(parse_networks))
+        echo "Existing WiFi networks:"
+        for network in "${networks[@]}"; do
+            echo "  - $network"
+        done
+        echo
+        
+        while true; do
+            read -p "[A]dd network, [R]emove network, or [C]ontinue? [A/R/C]: " wifi_action
+            wifi_action=$(echo "$wifi_action" | tr '[:lower:]' '[:upper:]')
+            
+            case "$wifi_action" in
+                A)
+                    add_network
+                    ;;
+                R)
+                    remove_network
+                    ;;
+                C|"")
+                    info "Continuing with existing WiFi configuration"
+                    break
+                    ;;
+                *)
+                    warn "Invalid choice. Please enter A, R, or C"
+                    ;;
+            esac
+            
+            # Re-read networks after modification
+            if [ -f "$WIFI_FILE" ]; then
+                networks=($(parse_networks))
+                if [ ${#networks[@]} -gt 0 ]; then
+                    echo
+                    echo "Current networks:"
+                    for network in "${networks[@]}"; do
+                        echo "  - $network"
+                    done
+                    echo
+                fi
+            fi
+        done
+    else
+        info "No WiFi configuration found. Let's create one."
+        add_network
     fi
+    
+    echo
 else
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "STEP 3: WiFi Configuration"
