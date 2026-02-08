@@ -23,34 +23,32 @@ My personal NixOS configuration using flakes and home-manager for desktop and la
 
 1. **Install NixOS** using the standard installer (create user: `jay`)
 
-2. **Enable Git and Flakes**
-
-   Edit `/etc/nixos/configuration.nix` and add:
-   ```nix
-   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-   environment.systemPackages = with pkgs; [ git vim ];
-   ```
-   
-   Then rebuild:
-   ```bash
-   sudo nixos-rebuild switch
-   ```
-
-3. **Clone This Repository**
+2. **Clone This Repository** (using temporary git shell)
 
    ```bash
+   # Backup default config
    sudo mv /etc/nixos /etc/nixos.backup
+   
+   # Open a temporary shell with git
+   nix-shell -p git
+   
+   # Clone the repo
    sudo git clone https://github.com/Jerbear0/nixos-config.git /etc/nixos
    sudo chown -R jay:users /etc/nixos
+   
+   # Exit the temporary shell
+   exit
    ```
 
-4. **Run Setup Script**
+3. **Run Setup Script**
 
    ```bash
    cd /etc/nixos
    chmod +x setup.sh
    ./setup.sh
    ```
+
+   The script will create temporary shells with needed packages as required (like for WiFi scanning).
 
 ## Repository Structure
 
@@ -64,11 +62,18 @@ nixos-config/
 │
 ├── configs/              # Application configs (waybar, wofi, etc.)
 ├── home/                 # Home-manager modules (common/desktop/laptop)
-├── hosts/                # Host-specific configs + hardware configs
+├── hosts/                # Host-specific configs
+│   └── drives/           # Hardware configs
+│       ├── desktop-drives.nix.template  # Template (in git)
+│       ├── laptop-drives.nix.template   # Template (in git)
+│       ├── desktop-drives.nix           # Generated (gitignored)
+│       └── laptop-drives.nix            # Generated (gitignored)
 ├── modules/              # Custom NixOS modules (VR, face tracking)
 ├── pkgs/                 # Custom packages + AppImages
 └── secrets/              # Secrets (gitignored)
 ```
+
+**Note:** The actual `*-drives.nix` files are gitignored because they contain machine-specific UUIDs. The `.template` files in git serve as reference.
 
 ## Usage
 
@@ -138,7 +143,7 @@ After running `setup.sh`, configure SSH and git to push changes:
 
 ### Build Errors
 - Verify AppImages exist in `pkgs/`
-- Check UUIDs in `hosts/drives/*-drives.nix`
+- Check that `hosts/drives/*-drives.nix` was generated (not just the template)
 - For laptop: ensure `secrets/wifi-laptop.nix` exists
 
 ### Can't Push to GitHub
