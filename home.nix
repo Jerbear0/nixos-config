@@ -169,7 +169,7 @@
   };  
   
   # Symlink /etc/nixos/configs/starship.toml -> ~/.config/starship.toml  
-  home.file.".config/starship.toml".source = /etc/nixos/configs/starship.toml; 
+  home.file.".config/starship.toml".source = ./configs/starship.toml; 
  
   ############################  
   # Auto git pull service  
