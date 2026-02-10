@@ -95,7 +95,8 @@
     protonup-qt  
     psmisc  
     p7zip 
-    python3 
+    python3
+    ranger 
     spotify  
     steam 
     steamcmd 
