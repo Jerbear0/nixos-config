@@ -96,6 +96,7 @@
     psmisc  
     p7zip 
     python3
+    r2modman
     ranger 
     spotify  
     steam 
