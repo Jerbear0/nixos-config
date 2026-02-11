@@ -162,10 +162,18 @@
       gamescope  
       proton-ge-bin  
     ];  
-  
+ 
     remotePlay.openFirewall = true;  
     dedicatedServer.openFirewall = true;  
     localNetworkGameTransfers.openFirewall = true;  
+  };
+
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "0";
+    # Add these for gamescope:
+    VK_DEVICE_SELECT = "0";
+    __GL_GSYNC_ALLOWED = "0";
+    __GL_VRR_ALLOWED = "0";
   };
 
   programs.obs-studio = {  
@@ -193,15 +201,15 @@
       flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     '';
   };
-  
+
+  programs.gamescope.enable = true;
+  programs.gamescope.capSysNice = true;  
   programs.steam.gamescopeSession.enable = true;
   programs.vrcft-avalonia.enable = true;    
   programs.baballonia.enable = true;  
   programs.vrchat.enable = true;    
 
-  programs.firefox.enable = true;  
-
-  environment.sessionVariables.NIXOS_OZONE_WL = "0";  
+  programs.firefox.enable = true;   
 
   ############################  
   # Audio (PipeWire + WirePlumber)  
