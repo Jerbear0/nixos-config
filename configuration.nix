@@ -114,6 +114,11 @@
     xdg-desktop-portal-hyprland  
     xdg-utils
     xsensors   
+    (python311.withPackages (ps: with ps; [
+      tkinter
+      pip
+      virtualenv
+    ]))
 
   (callPackage ./pkgs/discord-music-presence.nix { }) 
   ];  
