@@ -326,6 +326,7 @@ in
         "rounding 4, floating:0, onworkspace:f[1-10]"  
         "suppressevent maximize, class:.*"  
         "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"  
+        "suppressevent fullscreen, title:^(Star Citizen)$"
       ];  
   
       # Workspace rules  
