@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:  
+{ config, pkgs, lib, inputs, ... }:  
  
 {  
   imports = [   
@@ -7,7 +7,11 @@
     ./modules/vrcft-avalonia.nix 
     ./modules/vrchat.nix  
   ];  
-  
+
+  nixpkgs.overlays = [
+    inputs.nix-citizen.overlays.default
+  ];
+
   ############################  
   # Bootloader  
   ############################  
@@ -39,7 +43,7 @@
     extraGroups = [ "networkmanager" "wheel" "video" "dialout" ];  
     packages = [ ];  
   };  
-  
+
   ############################  
   # Nix settings  
   ############################  
@@ -66,6 +70,7 @@
   environment.systemPackages = with pkgs; [  
     alsa-utils  
     appimage-run  
+    baobab
     btop  
     brightnessctl  
     bumblebee  
@@ -73,8 +78,7 @@
     darktable
     discord  
     fastfetch  
-    firefox  
-    gamescope  
+    firefox   
     git  
     glib
     goverlay  
@@ -83,7 +87,8 @@
     kitty 
     libreoffice 
     logseq
-    lshw  
+    lshw 
+    lug-helper 
     lutris  
     mangohud
     nmap 
@@ -99,6 +104,7 @@
     r2modman
     ranger 
     spotify  
+    star-citizen
     steam 
     steamcmd 
     steam-run
@@ -208,13 +214,17 @@
     '';
   };
 
-  programs.gamescope.enable = true;
-  programs.gamescope.capSysNice = true;  
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true;
+    package = pkgs.gamescope.override {
+      enableExecutable = true;
+    };
+  };  
   programs.steam.gamescopeSession.enable = true;
   programs.vrcft-avalonia.enable = true;    
   programs.baballonia.enable = true;  
   programs.vrchat.enable = true;    
-
   programs.firefox.enable = true;   
 
   ############################  
