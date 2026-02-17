@@ -137,7 +137,7 @@ in
         enable_swallow = true;  
         swallow_regex = "^(nautilus|nemo|thunar|btrfs-assistant.)$";  
         focus_on_activate = true;  
-        vrr = 2;  
+        vrr = 0;  
       };  
   
       # ===== Render =====  
