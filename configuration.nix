@@ -110,7 +110,8 @@
     steam-run
     unityhub  
     tmux  
-    vim  
+    vim 
+    vlc 
     vulkan-loader
     vulkan-tools
     vulkan-validation-layers
