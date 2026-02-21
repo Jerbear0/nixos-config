@@ -22,7 +22,7 @@
     };
 
   fileSystems. "/mnt/data" =
-    { device = "/dev/disk/by-uuid/37df5ffa-1db4-4f48-b060-7a89f620572d"
+    { device = "/dev/disk/by-uuid/37df5ffa-1db4-4f48-b060-7a89f620572d";
       fsType = "ext4";
       options = [ "noatime" "nofail" ];
     };
