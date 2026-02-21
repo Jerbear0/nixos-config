@@ -28,7 +28,7 @@
     };
 
   systemd.tmpfiles.rules = [
-    "d /mnt/data 0755 jay users -"
+    "Z /mnt/data 0755 jay users -"
   ];
 
   swapDevices = [ ];
