@@ -188,6 +188,7 @@
     VK_DEVICE_SELECT = "0";
     __GL_GSYNC_ALLOWED = "0";
     __GL_VRR_ALLOWED = "0";
+    PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES = "1";
   };
 
   programs.obs-studio = {  
