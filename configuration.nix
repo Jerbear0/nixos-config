@@ -73,6 +73,7 @@
     baobab
     btop  
     brightnessctl  
+    bs-manager
     bumblebee  
     cabextract  
     darktable
