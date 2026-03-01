@@ -93,6 +93,7 @@
     lutris  
     mangohud
     nmap 
+    orca-slicer
     pavucontrol  
     polkit  
     primus
