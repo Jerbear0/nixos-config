@@ -93,7 +93,6 @@
     lutris  
     mangohud
     nmap 
-    orca-slicer
     pavucontrol  
     polkit  
     primus
@@ -122,7 +121,16 @@
     wineWowPackages.staging  
     xdg-desktop-portal-hyprland  
     xdg-utils
-    xsensors   
+    xsensors
+    (pkgs.symlinkJoin {
+      name = "orca-slicer";
+      paths = [ pkgs.orca-slicer ];
+      buildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/orca-slicer \
+          --set GBM_BACKEND dri
+      '';
+    })
     (python311.withPackages (ps: with ps; [
       tkinter
       pip
