@@ -83,6 +83,7 @@
     git  
     glib
     goverlay  
+    gparted
     hyprutils  
     kdePackages.dolphin  
     kitty 
@@ -267,7 +268,9 @@
   services.udev.enable = true;  
   services.openssh.enable = true;   
   services.gnome.gnome-keyring.enable = true;  
- 
+  services.udisks2.enable = true;
+  services.gvfs.enable = true; 
+
   ############################  
   # System state version  
   ############################  
