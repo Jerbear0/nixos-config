@@ -122,6 +122,7 @@
     wineWowPackages.staging  
     xdg-desktop-portal-hyprland  
     xdg-utils
+    xorg.xrandr
     xsensors
     (pkgs.symlinkJoin {
        name = "orca-slicer";
