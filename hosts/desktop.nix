@@ -29,6 +29,9 @@
   };  
   
   services.xserver.videoDrivers = [ "nvidia" ];  
+  services.xserver.xrandrHeads = {
+  "DP-6".primary = true;
+  };
   
   hardware.nvidia = {  
     modesetting.enable = true;  
