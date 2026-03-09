@@ -113,7 +113,8 @@
     unityhub  
     tmux  
     vim 
-    vlc 
+    vlc
+    vrc-get 
     vulkan-loader
     vulkan-tools
     vulkan-validation-layers
