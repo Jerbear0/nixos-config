@@ -7,7 +7,7 @@ let
 
     src = pkgs.fetchurl {
       url = "https://github.com/vrc-get/vrc-get/releases/download/gui-v1.1.5/alcom_1.1.5_amd64.deb";
-      sha256 = "sha256-18r01xc52yf4z7q7mdak0vb8agimm63s9hll7qmfw3n7nq5sdgvl";
+      sha256 = "sha256-dL+mC7bHDu4qPpTCpIepNT6F1gZTtXrw+cR5UVgPIKM=";
     };
 
     nativeBuildInputs = [ pkgs.dpkg pkgs.autoPatchelfHook ];
