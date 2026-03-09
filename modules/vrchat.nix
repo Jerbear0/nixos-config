@@ -1,47 +1,49 @@
 { config, lib, pkgs, ... }:
-
 with lib;
-
 let
-  # Wrapper for the ALCOM AppImage
-  alcom-script = pkgs.writeShellScriptBin "alcom" ''
-    set -euo pipefail
+  alcom-pkg = pkgs.stdenv.mkDerivation {
+    pname = "alcom";
+    version = "1.1.5";
 
-    # Find ALCOM AppImage (any version) at RUNTIME
-    APPIMAGE=""
-    for appimage in /etc/nixos/pkgs/alcom-*.AppImage; do
-      if [ -f "$appimage" ]; then
-        APPIMAGE="$appimage"
-        break
-      fi
-    done
+    src = pkgs.fetchurl {
+      url = "https://github.com/vrc-get/vrc-get/releases/download/gui-v1.1.5/alcom_1.1.5_amd64.deb";
+      sha256 = "sha256-18r01xc52yf4z7q7mdak0vb8agimm63s9hll7qmfw3n7nq5sdgvl";
+    };
 
-    if [ -z "$APPIMAGE" ]; then
-      echo "ALCOM AppImage not found in /etc/nixos/pkgs/" >&2
-      echo "Please download from: https://github.com/vrc-get/vrc-get/releases" >&2
-      exit 1
-    fi
+    nativeBuildInputs = [ pkgs.dpkg pkgs.autoPatchelfHook ];
 
-    if [ ! -x "$APPIMAGE" ]; then
-      chmod +x "$APPIMAGE" 2>/dev/null || true
-    fi
+    buildInputs = with pkgs; [
+      webkitgtk_4_1
+      gtk3
+      glib
+      dbus
+    ];
 
-    # Copy to /tmp so AppImage can self-update / create overlays if needed
-    tmpAppImage="$(mktemp /tmp/alcom-XXXXXX.AppImage)"
-    cp "$APPIMAGE" "$tmpAppImage"
-    chmod +x "$tmpAppImage"
+    unpackPhase = "dpkg-deb -x $src .";
 
-    exec ${pkgs.appimage-run}/bin/appimage-run "$tmpAppImage" "$@"
-  '';
+    installPhase = ''
+      mkdir -p $out
+      cp -r usr/* $out/
+    '';
+  };
+
+  alcom-desktop = pkgs.makeDesktopItem {
+    name = "alcom";
+    desktopName = "ALCOM";
+    comment = "VRChat Package Manager";
+    exec = "alcom";
+    terminal = false;
+    categories = [ "Development" ];
+  };
 in
 {
   options.programs.vrchat.enable = mkEnableOption "VRChat avatar tools (ALCOM + Unity Hub)";
-  
+
   config = mkIf config.programs.vrchat.enable {
     environment.systemPackages = with pkgs; [
-      alcom-script
+      alcom-pkg
+      alcom-desktop
       unityhub
     ];
   };
 }
-    
