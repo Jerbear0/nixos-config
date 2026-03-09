@@ -27,8 +27,7 @@ let
     export GDK_BACKEND=x11
     export WEBKIT_DISABLE_DMABUF_RENDERER=1
     export WEBKIT_DISABLE_COMPOSITING_MODE=1
-    export WEBKIT_FORCE_SANDBOX=0
-    export WPE_BACKEND=wpebackend-fdo
+    export WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
     exec ${alcom-pkg}/bin/ALCOM "$@"
   '';
 
