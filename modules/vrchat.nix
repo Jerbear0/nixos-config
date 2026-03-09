@@ -19,12 +19,16 @@ let
     installPhase = ''
       mkdir -p $out
       cp -r usr/* $out/
+      rm -f $out/share/applications/ALCOM.desktop
     '';
   };
 
   alcom-wrapper = pkgs.writeShellScriptBin "alcom" ''
     export GDK_BACKEND=x11
     export WEBKIT_DISABLE_DMABUF_RENDERER=1
+    export WEBKIT_DISABLE_COMPOSITING_MODE=1
+    export WEBKIT_FORCE_SANDBOX=0
+    export WPE_BACKEND=wpebackend-fdo
     exec ${alcom-pkg}/bin/ALCOM "$@"
   '';
 
