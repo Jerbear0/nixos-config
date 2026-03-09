@@ -174,21 +174,25 @@
   
     package = pkgs.steam.override {  
       extraPkgs = pkgs: with pkgs; [  
-        keyutils  
-        libpng  
-        libpulseaudio  
-        libvorbis  
-        libxml2  
-        mangohud  
-        SDL2  
-        stdenv.cc.cc.lib  
-        xorg.libXcursor  
-        xorg.libXi  
-        xorg.libXinerama  
-        xorg.libXScrnSaver  
+      keyutils
+      libpng
+      libpulseaudio
+      libvorbis
+      libxml2
+      mangohud
+      SDL2
+      stdenv.cc.cc.lib
+      xorg.libXcursor
+      xorg.libXi
+      xorg.libXinerama
+      xorg.libXScrnSaver 
+      (pkgs.runCommand "libxml2-compat" {} ''
+        mkdir -p $out/lib
+        ln -s ${pkgs.libxml2}/lib/libxml2.so.16 $out/lib/libxml2.so.2
+      '')
       ];  
-    };  
-  
+    };   
+
     extraCompatPackages = with pkgs; [  
       gamescope  
       proton-ge-bin  
