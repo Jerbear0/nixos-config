@@ -7,7 +7,7 @@ let
   # Combine base Baballonia + Libuvc DLL into one tree  
   baballonia-with-uvc = pkgs.stdenv.mkDerivation {  
     pname = "baballonia-with-uvc";  
-    version = baballonia-unpacked.version or "1.1.0.9rc4";  
+    version = baballonia-unpacked.version or "1.1.1.0rc5";  
   
     src = null;  
     dontUnpack = true;  
@@ -67,6 +67,10 @@ pkgs.buildFHSEnvBubblewrap {
     gst_all_1.gstreamer  
     gst_all_1.gst-plugins-base  
     gst_all_1.gst-plugins-good  
+    gst_all_1.gst-plugins-bad
+    gst_all_1.gst-plugins-ugly
+    v4l-utils
+    libv4l
   ];  
   
   extraBwrapArgs = [  

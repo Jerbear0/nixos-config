@@ -55,7 +55,10 @@ in
       SUBSYSTEM=="video4linux", ATTRS{idVendor}=="35bd", MODE="0660", TAG+="uaccess", GROUP="video"  
   
       # HID devices from Bigscreen  
-      SUBSYSTEM=="hidraw", ATTRS{idVendor}=="35bd", MODE="0660", TAG+="uaccess", GROUP="video"  
+      SUBSYSTEM=="hidraw", ATTRS{idVendor}=="35bd", MODE="0660", TAG+="uaccess", GROUP="video" 
+
+      # Espressif ESP32-S3 Babble Tracker
+      SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", TAG+="uaccess", GROUP="dialout"
     '';  
   };  
 }   
