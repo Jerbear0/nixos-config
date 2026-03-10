@@ -59,6 +59,7 @@ in
 
       # Espressif ESP32-S3 Babble Tracker
       SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0660", TAG+="uaccess", GROUP="dialout"
+      SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="303a", ATTR{idProduct}=="8000", MODE="0660", GROUP="video"
     '';  
   };  
 }   
