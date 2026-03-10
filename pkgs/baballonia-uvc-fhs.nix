@@ -77,6 +77,7 @@ pkgs.buildFHSEnvBubblewrap {
     "--bind" "/home/jay" "/home"  
     "--bind" "/home/jay/ProjectBabble" "/home/ProjectBabble"  
     "--bind" "/home/jay/.config/VRCFaceTracking" "/home/jay/.config/VRCFaceTracking"
+    "--share-net"
   ];  
   
   runScript = "${pkgs.writeShellScriptBin "baballonia-uvc-launch" ''  

@@ -5,8 +5,8 @@ stdenvNoCC.mkDerivation rec {
   version = "1.1.1.0rc5";  
   
   src = fetchurl {  
-    url = "https://github.com/Project-Babble/Baballonia/releases/download/v1.1.1.0rc5/Baballonia.x64.v1.1.1.0rc5.tar.xz";  
-    sha256 = "sha256-0YinoDbJDI+fB/MiYnnv0etM7TxumQNyJYRMWjpgV7c=";  
+    url = "https://github.com/Project-Babble/Baballonia/releases/download/v1.1.0.9HF5/Baballonia.x64.v1.1.0.9HF5.tar.xz";  
+    sha256 = "0ji9acf7qx6v9xihqpp0hrwgl45iabkj3qcmqf5fvpv27css2r6k";  
   };  
   
   # Important: we handle the archive ourselves in installPhase  
