@@ -2,11 +2,11 @@
   
 stdenvNoCC.mkDerivation rec {  
   pname = "baballonia-unpacked";  
-  version = "1.1.0.9rc4";  
+  version = "1.1.1.0rc5";  
   
   src = fetchurl {  
-    url = "https://github.com/Project-Babble/Baballonia/releases/download/v1.1.0.9rc4/Baballonia.x64.v1.1.0.9rc4.tar.gz";  
-    sha256 = "sha256-49UHWe9hP3UvbRx1CWvtPLIVTQL9W8mHcVunUABLK48=";  
+    url = "https://github.com/Project-Babble/Baballonia/releases/download/v1.1.1.0rc5/Baballonia.x64.v1.1.1.0rc5.tar.xz";  
+    sha256 = "sha256-0YinoDbJDI+fB/MiYnnv0etM7TxumQNyJYRMWjpgV7c=";  
   };  
   
   # Important: we handle the archive ourselves in installPhase  
@@ -19,7 +19,7 @@ stdenvNoCC.mkDerivation rec {
   
     mkdir -p "$out/opt/baballonia"  
     # src is the tarball; just extract it directly into the target dir  
-    tar -xzf "$src" -C "$out/opt/baballonia"  
+    tar -xJf "$src" -C "$out/opt/baballonia"  
   
     runHook postInstall  
   '';  
