@@ -20,8 +20,11 @@
         };
       };
     in {
-      packages.${system}.discord-music-presence =
-        import ./pkgs/discord-music-presence.nix { inherit pkgs lib; };
+      packages.${system} = {
+        discord-music-presence = import ./pkgs/discord-music-presence.nix { inherit pkgs lib; };
+        baballonia-rc2-ml4 = pkgs.callPackage ./pkgs/baballonia-rc2-src.nix { mlVersion = "4"; };
+        baballonia-rc2-ml5 = pkgs.callPackage ./pkgs/baballonia-rc2-src.nix { mlVersion = "5"; };
+      };
 
       nixosConfigurations = {
         nixos-desktop = lib.nixosSystem {
