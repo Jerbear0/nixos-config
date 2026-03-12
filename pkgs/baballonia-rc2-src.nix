@@ -26,7 +26,8 @@ buildDotnetModule rec {
     fetchSubmodules = true;
   };
 
-  projectFile = "src/Baballonia.Desktop/Baballonia.Desktop.csproj";
+  projectFile = "Baballonia.sln";
+  dotnetBuildFlags = [ "-p:TargetFramework=net10.0" ];
   nugetDeps = if mlVersion == "4"
   then ./nuget-deps-rc2-ml4.json
   else ./nuget-deps-rc2-ml5.json;
