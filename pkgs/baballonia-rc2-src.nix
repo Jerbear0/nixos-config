@@ -22,7 +22,7 @@ buildDotnetModule rec {
     owner = "Project-Babble";
     repo = "Baballonia";
     rev = "v1.1.1.0rc2";
-    hash = "sha256-wmj8Kbl8VlCLX4UCI5StSb/Viswl0rTz+zhY2sxvA/4=";
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa=";
     fetchSubmodules = true;
   };
 
