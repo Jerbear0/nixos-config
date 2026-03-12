@@ -27,7 +27,9 @@ buildDotnetModule rec {
   };
 
   projectFile = "src/Baballonia.Desktop/Baballonia.Desktop.csproj";
-  nugetDeps = ./nuget-deps-rc2-ml${mlVersion}.nix;  # step 2: generate this
+  nugetDeps = if mlVersion == "4"
+  then ./nuget-deps-rc2-ml4.json
+  else ./nuget-deps-rc2-ml5.json;
 
   dotnet-sdk     = dotnetCorePackages.sdk_10_0;
   dotnet-runtime = dotnetCorePackages.runtime_10_0;

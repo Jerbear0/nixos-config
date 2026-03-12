@@ -36,7 +36,7 @@ in
 
     package = lib.mkOption {
       type    = lib.types.enum [ "stable" "rc2-ml4" "rc2-ml5" ];
-      default = "stable";
+      default = "rc2-ml4";
       description = ''
         Which Baballonia build to use.
           stable   – pre-built tarball (default, pure build, no extra flags needed)
