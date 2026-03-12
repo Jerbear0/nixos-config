@@ -16,16 +16,17 @@ in
 
 buildDotnetModule rec {
   pname = "baballonia-rc2-ml${mlVersion}";
-  version = "1.1.1.0rc2";
+  version = "1.1.1";
 
   src = fetchFromGitHub {
     owner = "Project-Babble";
     repo = "Baballonia";
     rev = "v1.1.1.0rc2";
     hash = "sha256-wmj8Kbl8VlCLX4UCI5StSb/Viswl0rTz+zhY2sxvA/4=";
+    fetchSubmodules = true;
   };
 
-  projectFile = "Baballonia.Desktop/Baballonia.Desktop.csproj";
+  projectFile = "src/Baballonia.Desktop/Baballonia.Desktop.csproj";
   nugetDeps = ./nuget-deps-rc2-ml${mlVersion}.nix;  # step 2: generate this
 
   dotnet-sdk     = dotnetCorePackages.sdk_10_0;
