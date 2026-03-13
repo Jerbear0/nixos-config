@@ -78,14 +78,14 @@ gen_hw=${gen_hw:-Y}
 
 if [[ "$gen_hw" =~ ^[Yy]$ ]]; then
     info "Generating hardware configuration..."
-    
+
     # Generate new hardware config
     sudo nixos-generate-config --show-hardware-config > /tmp/new-hardware.nix
-    
+
     # Move it to the right place
     sudo mv /tmp/new-hardware.nix "$DRIVES_FILE"
     sudo chown jay:users "$DRIVES_FILE"
-    
+
     success "Hardware configuration generated at: $DRIVES_FILE"
     info "This file is gitignored - it's specific to this machine"
 else
@@ -110,41 +110,52 @@ if [[ "$HOST" == "laptop" ]]; then
     echo "STEP 3: WiFi Configuration (Laptop)"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo
-    
+
     WIFI_FILE="secrets/wifi-laptop.nix"
     mkdir -p secrets
-    
+
     # Function to parse existing networks from the file
     parse_networks() {
         if [ ! -f "$WIFI_FILE" ]; then
             echo ""
             return
         fi
-        # Extract network SSIDs (lines with = {)
         grep -oP '"\K[^"]+(?=" = \{)' "$WIFI_FILE" 2>/dev/null || echo ""
     }
-    
+
     # Function to scan for WiFi networks
     scan_wifi() {
-        info "Scanning for WiFi networks..."
-        # Create temporary shell with nmcli
-        nix-shell -p networkmanager --run "nmcli -t -f SSID dev wifi list" 2>/dev/null | grep -v '^$' | sort -u
+        info "Scanning for WiFi networks..." >&2
+        local iface
+        iface=$(iw dev | awk '$1=="Interface"{print $2}' | head -1)
+        sudo iw dev "$iface" scan 2>/dev/null \
+            | grep -oP '(?<=SSID: ).+' | grep -v '^$' | sort -u
     }
-    
+
     # Function to add a network
     add_network() {
         echo
-        read -p "Scan for available networks? [Y/n]: " do_scan
+	read -p "Scan for available networks? [Y/n]: " do_scan
         do_scan=${do_scan:-Y}
-        
+
         if [[ "$do_scan" =~ ^[Yy]$ ]]; then
-            available_networks=$(scan_wifi)
-            if [ -n "$available_networks" ]; then
+            mapfile -t available_networks < <(scan_wifi)
+            if [ ${#available_networks[@]} -gt 0 ]; then
                 echo
                 echo "Available networks:"
-                echo "$available_networks" | nl
+                for i in "${!available_networks[@]}"; do
+                    echo "$((i+1)). ${available_networks[$i]}"
+                done
                 echo
-                read -p "Enter SSID from list (or type manually): " wifi_ssid
+                read -p "Enter number to select, or type SSID manually: " wifi_choice
+                if [[ "$wifi_choice" =~ ^[0-9]+$ ]] && \
+                   [ "$wifi_choice" -ge 1 ] && \
+                   [ "$wifi_choice" -le "${#available_networks[@]}" ]; then
+                    wifi_ssid="${available_networks[$((wifi_choice-1))]}"
+                    info "Selected: $wifi_ssid"
+                else
+                    wifi_ssid="$wifi_choice"
+                fi
             else
                 warn "No networks found or scan failed"
                 read -p "Enter WiFi SSID manually: " wifi_ssid
@@ -152,11 +163,10 @@ if [[ "$HOST" == "laptop" ]]; then
         else
             read -p "Enter WiFi SSID: " wifi_ssid
         fi
-        
+
         read -sp "Enter WiFi password: " wifi_pass
         echo
-        
-        # If file doesn't exist, create it
+
         if [ ! -f "$WIFI_FILE" ]; then
             cat > "$WIFI_FILE" << WIFIEOF
 {
@@ -170,8 +180,7 @@ WIFIEOF
             chmod 600 "$WIFI_FILE"
             success "WiFi configuration created with network: $wifi_ssid"
         else
-            # Add to existing file (before the closing braces)
-            # Remove last two lines (closing braces), add new network, then add braces back
+            # Remove last two closing braces, append new network, re-close
             head -n -2 "$WIFI_FILE" > "${WIFI_FILE}.tmp"
             cat >> "${WIFI_FILE}.tmp" << WIFIEOF
     "$wifi_ssid" = {
@@ -185,24 +194,24 @@ WIFIEOF
             success "Added network: $wifi_ssid"
         fi
     }
-    
+
     # Function to remove a network
     remove_network() {
         local networks=($(parse_networks))
         local num_networks=${#networks[@]}
-        
+
         if [ $num_networks -eq 0 ]; then
             warn "No networks to remove"
             return
         fi
-        
+
         echo
         echo "Current networks:"
         for i in "${!networks[@]}"; do
             echo "$((i+1)). ${networks[$i]}"
         done
         echo
-        
+
         if [ $num_networks -eq 1 ]; then
             read -p "Remove '${networks[0]}'? [y/N]: " confirm
             if [[ "$confirm" =~ ^[Yy]$ ]]; then
@@ -215,7 +224,6 @@ WIFIEOF
             read -p "Enter number to remove (1-$num_networks) or 0 to cancel: " choice
             if [ "$choice" -gt 0 ] && [ "$choice" -le $num_networks ]; then
                 local network_to_remove="${networks[$((choice-1))]}"
-                # Remove the network block from the file
                 sed -i "/\"$network_to_remove\" = {/,/};/d" "$WIFI_FILE"
                 success "Removed network: $network_to_remove"
             else
@@ -223,7 +231,7 @@ WIFIEOF
             fi
         fi
     }
-    
+
     # Main WiFi configuration logic
     if [ -f "$WIFI_FILE" ]; then
         networks=($(parse_networks))
@@ -232,11 +240,11 @@ WIFIEOF
             echo "  - $network"
         done
         echo
-        
+
         while true; do
             read -p "[A]dd network, [R]emove network, or [C]ontinue? [A/R/C]: " wifi_action
             wifi_action=$(echo "$wifi_action" | tr '[:lower:]' '[:upper:]')
-            
+
             case "$wifi_action" in
                 A)
                     add_network
@@ -252,7 +260,7 @@ WIFIEOF
                     warn "Invalid choice. Please enter A, R, or C"
                     ;;
             esac
-            
+
             # Re-read networks after modification
             if [ -f "$WIFI_FILE" ]; then
                 networks=($(parse_networks))
@@ -270,7 +278,15 @@ WIFIEOF
         info "No WiFi configuration found. Let's create one."
         add_network
     fi
-    
+
+    # Make the file visible to the Nix flake evaluator without committing it
+    if [ -f "$WIFI_FILE" ]; then
+        set +e
+        git add --intent-to-add --force "$WIFI_FILE" 2>/dev/null
+        set -e
+        info "Registered $WIFI_FILE with git (untracked, not committed)"
+    fi
+
     echo
 else
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -305,7 +321,6 @@ info "Checking required files..."
 for file in "${REQUIRED_FILES[@]}"; do
     if [ -f "$file" ]; then
         success "$file exists"
-        # Make executable if it's an AppImage
         if [[ "$file" == *.AppImage ]]; then
             chmod +x "$file"
         fi
@@ -320,7 +335,6 @@ info "Checking optional files..."
 for file in "${OPTIONAL_FILES[@]}"; do
     if [ -f "$file" ]; then
         success "$file exists"
-        # Make executable if it's an AppImage
         if [[ "$file" == *.AppImage ]]; then
             chmod +x "$file"
         fi
@@ -371,13 +385,13 @@ if [[ "$build_now" =~ ^[Yy]$ ]]; then
     info "Building system configuration..."
     echo
     sudo nixos-rebuild switch --flake ".#$CONFIG_NAME"
-    
+
     echo
     success "Build complete!"
     echo
     read -p "Reboot now? [y/N]: " reboot_now
     reboot_now=${reboot_now:-N}
-    
+
     if [[ "$reboot_now" =~ ^[Yy]$ ]]; then
         sudo reboot
     else
