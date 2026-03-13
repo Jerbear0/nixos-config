@@ -71,8 +71,27 @@ if [ "$dirty" = true ] && [ "$behind" -gt 0 ]; then
   echo "We will commit your local changes first, then pull."  
   echo  
   
-  commit_with_prompt || exit 1  
-  dirty=false  
+  commit_with_prompt() {
+    echo "You have uncommitted changes."
+    git status -sb
+    echo
+
+    read -rp "Commit message (leave empty to abort): " msg
+    if [ -z "$msg" ]; then
+      echo "Aborting: empty commit message."
+      return 1
+    fi
+
+    # Unstage any gitignored files that were force-added
+    git diff --name-only --cached | while read -r f; do
+      if git check-ignore -q "$f"; then
+        git rm --cached "$f" 2>/dev/null || true
+      fi
+    done
+
+    git add -u
+    git commit -m "$msg"
+  } 
   
   # After committing, recompute ahead/behind  
   recalc_ahead_behind  
