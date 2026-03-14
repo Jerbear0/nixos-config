@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:  
+{ config, lib, pkgs,... }:  
 
 let
   secrets = import ../secrets/wifi-laptop.nix;
@@ -15,7 +15,7 @@ in
   networking.hostName = "nixos-laptop";  
   networking.wireless = {
     enable = true;
-    networks = secrets.networks;
+    networks = secrets;
   };  
 
   ############################  

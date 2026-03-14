@@ -64,7 +64,6 @@ echo
 DRIVES_FILE="hosts/drives/${HOST}-drives.nix"
 DRIVES_TEMPLATE="hosts/drives/${HOST}-drives.nix.template"
 
-# Ensure the drives directory exists
 mkdir -p hosts/drives
 
 warn "Hardware configuration will be generated for this machine"
@@ -79,10 +78,7 @@ gen_hw=${gen_hw:-Y}
 if [[ "$gen_hw" =~ ^[Yy]$ ]]; then
     info "Generating hardware configuration..."
 
-    # Generate new hardware config
     sudo nixos-generate-config --show-hardware-config > /tmp/new-hardware.nix
-
-    # Move it to the right place
     sudo mv /tmp/new-hardware.nix "$DRIVES_FILE"
     sudo chown jay:users "$DRIVES_FILE"
 
@@ -114,16 +110,6 @@ if [[ "$HOST" == "laptop" ]]; then
     WIFI_FILE="secrets/wifi-laptop.nix"
     mkdir -p secrets
 
-    # Function to parse existing networks from the file
-    parse_networks() {
-        if [ ! -f "$WIFI_FILE" ]; then
-            echo ""
-            return
-        fi
-        grep -oP '"\K[^"]+(?=" = \{)' "$WIFI_FILE" 2>/dev/null || echo ""
-    }
-
-    # Function to scan for WiFi networks
     scan_wifi() {
         info "Scanning for WiFi networks..." >&2
         local iface
@@ -132,10 +118,17 @@ if [[ "$HOST" == "laptop" ]]; then
             | grep -oP '(?<=SSID: ).+' | grep -v '^$' | sort -u
     }
 
-    # Function to add a network
+    parse_networks() {
+        if [ ! -f "$WIFI_FILE" ]; then
+            echo ""
+            return
+        fi
+        grep -oP '"\K[^"]+(?=" = \{)' "$WIFI_FILE" 2>/dev/null || echo ""
+    }
+
     add_network() {
         echo
-	read -p "Scan for available networks? [Y/n]: " do_scan
+        read -p "Scan for available networks? [Y/n]: " do_scan
         do_scan=${do_scan:-Y}
 
         if [[ "$do_scan" =~ ^[Yy]$ ]]; then
@@ -180,7 +173,6 @@ WIFIEOF
             chmod 600 "$WIFI_FILE"
             success "WiFi configuration created with network: $wifi_ssid"
         else
-            # Remove last two closing braces, append new network, re-close
             head -n -2 "$WIFI_FILE" > "${WIFI_FILE}.tmp"
             cat >> "${WIFI_FILE}.tmp" << WIFIEOF
     "$wifi_ssid" = {
@@ -195,7 +187,6 @@ WIFIEOF
         fi
     }
 
-    # Function to remove a network
     remove_network() {
         local networks=($(parse_networks))
         local num_networks=${#networks[@]}
@@ -232,7 +223,7 @@ WIFIEOF
         fi
     }
 
-    # Main WiFi configuration logic
+    # Main WiFi interaction loop
     if [ -f "$WIFI_FILE" ]; then
         networks=($(parse_networks))
         echo "Existing WiFi networks:"
@@ -246,22 +237,12 @@ WIFIEOF
             wifi_action=$(echo "$wifi_action" | tr '[:lower:]' '[:upper:]')
 
             case "$wifi_action" in
-                A)
-                    add_network
-                    ;;
-                R)
-                    remove_network
-                    ;;
-                C|"")
-                    info "Continuing with existing WiFi configuration"
-                    break
-                    ;;
-                *)
-                    warn "Invalid choice. Please enter A, R, or C"
-                    ;;
+                A) add_network ;;
+                R) remove_network ;;
+                C|"") info "Continuing with existing WiFi configuration"; break ;;
+                *) warn "Invalid choice. Please enter A, R, or C" ;;
             esac
 
-            # Re-read networks after modification
             if [ -f "$WIFI_FILE" ]; then
                 networks=($(parse_networks))
                 if [ ${#networks[@]} -gt 0 ]; then
@@ -279,15 +260,8 @@ WIFIEOF
         add_network
     fi
 
-    # Make the file visible to the Nix flake evaluator without committing it
-    if [ -f "$WIFI_FILE" ]; then
-        set +e
-        git add --intent-to-add --force "$WIFI_FILE" 2>/dev/null
-        set -e
-        info "Registered $WIFI_FILE with git (untracked, not committed)"
-    fi
-
     echo
+
 else
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "STEP 3: WiFi Configuration"
@@ -352,7 +326,6 @@ if [[ "$ALL_PRESENT" != "true" ]]; then
     exit 1
 fi
 
-# Make facetracking script executable
 chmod +x modules/facetracking 2>/dev/null || true
 
 # ============================================================================
@@ -371,11 +344,11 @@ echo
 echo "Next steps:"
 echo "  1. Review the generated/created files"
 echo "  2. Build your system:"
-echo "     ${GREEN}sudo nixos-rebuild switch --flake .#$CONFIG_NAME${NC}"
+echo -e "     ${GREEN}sudo nixos-rebuild switch --flake .#$CONFIG_NAME --impure${NC}"
 echo "  3. Reboot when ready:"
-echo "     ${GREEN}sudo reboot${NC}"
+echo -e "     ${GREEN}sudo reboot${NC}"
 echo
-warn "NOTE: No --impure flag needed!"
+warn "NOTE: --impure is required for machine-specific secrets"
 echo
 
 read -p "Build the system now? [Y/n]: " build_now
@@ -384,7 +357,7 @@ build_now=${build_now:-Y}
 if [[ "$build_now" =~ ^[Yy]$ ]]; then
     info "Building system configuration..."
     echo
-    sudo nixos-rebuild switch --flake ".#$CONFIG_NAME"
+    sudo nixos-rebuild switch --flake ".#$CONFIG_NAME" --impure
 
     echo
     success "Build complete!"
@@ -399,5 +372,5 @@ if [[ "$build_now" =~ ^[Yy]$ ]]; then
     fi
 else
     info "Build skipped. Run manually when ready:"
-    echo "  sudo nixos-rebuild switch --flake .#$CONFIG_NAME"
+    echo "  sudo nixos-rebuild switch --flake .#$CONFIG_NAME --impure"
 fi
