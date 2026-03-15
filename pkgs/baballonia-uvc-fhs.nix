@@ -76,7 +76,7 @@ pkgs.buildFHSEnvBubblewrap {
   runScript = "${pkgs.writeShellScriptBin "baballonia-uvc-launch" ''
     set -eu
     cd /home
-    exec "${baballonia-unpacked}/opt/baballonia/Baballonia.Desktop"
+    exec "${baballonia-with-uvc}/opt/baballonia/Baballonia.Desktop"
   ''}/bin/baballonia-uvc-launch";
 
   extraEnv = {
