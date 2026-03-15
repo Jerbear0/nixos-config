@@ -1,4 +1,4 @@
-{ pkgs, lib, baballonia-unpacked, exePath ? "${baballonia-unpacked}/opt/baballonia/Baballonia.Desktop" }:
+{ pkgs, lib, baballonia-unpacked }:
 
 let
   baballonia-uvc-dll = ./Baballonia.LibuvcCapture.dll;
@@ -14,13 +14,8 @@ let
       set -eu
 
       mkdir -p "$out/opt"
-
-      # Copy base Baballonia tree — only needed for the stable tarball layout.
-      # For source-built packages the binary is already in $out/bin via buildDotnetModule,
-      # but we still need the Assets directory for icons/models referenced at runtime.
-      cp -r "${baballonia-unpacked}/opt/baballonia" "$out/opt/" 2>/dev/null || true
-
-      chmod -R u+rwX "$out/opt/baballonia" 2>/dev/null || true
+      cp -r "${baballonia-unpacked}/opt/baballonia" "$out/opt/"
+      chmod -R u+rwX "$out/opt/baballonia"
 
       mkdir -p "$out/opt/baballonia/Modules"
       cp "${baballonia-uvc-dll}" "$out/opt/baballonia/Modules/Baballonia.LibuvcCapture.dll"
@@ -81,7 +76,7 @@ pkgs.buildFHSEnvBubblewrap {
   runScript = "${pkgs.writeShellScriptBin "baballonia-uvc-launch" ''
     set -eu
     cd /home
-    exec "${exePath}"
+    exec "${baballonia-unpacked}/opt/baballonia/Baballonia.Desktop"
   ''}/bin/baballonia-uvc-launch";
 
   extraEnv = {

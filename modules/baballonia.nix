@@ -3,25 +3,10 @@
 let
   cfg = config.programs.baballonia;
 
-  baballonia-unpacked =
-    if cfg.package == "stable" then
-      pkgs.callPackage ../pkgs/baballonia-unpacked.nix { }
-    else if cfg.package == "rc2-ml4" then
-      pkgs.callPackage ../pkgs/baballonia-rc2-src.nix { mlVersion = "4"; }
-    else if cfg.package == "rc2-ml5" then
-      pkgs.callPackage ../pkgs/baballonia-rc2-src.nix { mlVersion = "5"; }
-    else
-      throw "programs.baballonia.package: unknown value '${cfg.package}', expected stable | rc2-ml4 | rc2-ml5";
-
-  # For source-built packages, the binary is at $out/bin/Baballonia.Desktop.
-  # For the stable tarball it lives under opt/baballonia/.
-  exePath =
-    if cfg.package == "stable"
-    then "${baballonia-unpacked}/opt/baballonia/Baballonia.Desktop"
-    else "${baballonia-unpacked}/bin/Baballonia.Desktop";
+  baballonia-unpacked = pkgs.callPackage ../pkgs/baballonia-unpacked.nix { };
 
   baballonia-uvc-fhs = pkgs.callPackage ../pkgs/baballonia-uvc-fhs.nix {
-    inherit baballonia-unpacked exePath;
+    inherit baballonia-unpacked;
   };
 
   baballonia-uvc-fixed = pkgs.writeShellScriptBin "baballonia-uvc" ''
@@ -33,20 +18,6 @@ in
 {
   options.programs.baballonia = {
     enable = lib.mkEnableOption "Baballonia VR eye and face tracking";
-
-    package = lib.mkOption {
-      type    = lib.types.enum [ "stable" "rc2-ml4" "rc2-ml5" ];
-      default = "stable";
-      description = ''
-        Which Baballonia build to use.
-          stable   – pre-built tarball (default, pure build, no extra flags needed)
-          rc2-ml4  – RC2 built from source with Microsoft.ML 4.0.2 + OnnxRuntime 1.18 (CPU)
-          rc2-ml5  – RC2 built from source with Microsoft.ML 5.0.0 + OnnxRuntime 1.20 (CPU)
-
-        For rc2-ml4 / rc2-ml5: run fetch-deps once with --impure to generate the
-        nuget lockfiles, then commit them. After that, nixos-rebuild needs no extra flags.
-      '';
-    };
   };
 
   config = lib.mkIf cfg.enable {
