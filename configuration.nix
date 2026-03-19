@@ -77,7 +77,8 @@
     bumblebee  
     cabextract  
     darktable
-    discord 
+    discord
+    element-desktop 
     esptool 
     fastfetch  
     firefox   
