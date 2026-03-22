@@ -1,5 +1,5 @@
 // ClockWidget.qml — date + time using SystemClock
-// SystemClock updates on the interval you set; format via Qt.formatDateTime
+// API: clock.date (QML date object), clock.hours, clock.minutes
 import Quickshell
 import QtQuick
 
@@ -9,7 +9,7 @@ Item {
 
     SystemClock {
         id: clock
-        precision: SystemClock.Minutes  // update every minute
+        precision: SystemClock.Minutes
     }
 
     Column {
@@ -19,7 +19,8 @@ Item {
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: Qt.formatDateTime(clock.now, "HH:mm")
+            // Use hours/minutes directly to avoid formatDateTime issues
+            text: Qt.formatTime(clock.date, "HH:mm")
             color: "#c8d2e0"
             font.pixelSize: 14
             font.bold: true
@@ -27,7 +28,7 @@ Item {
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: Qt.formatDateTime(clock.now, "d MMM")
+            text: Qt.formatDate(clock.date, "d MMM")
             color: "#8a9ab5"
             font.pixelSize: 10
         }

@@ -8,8 +8,8 @@ import QtQuick.Layouts
 PanelWindow {
     id: root
 
-    // Filled by Variants delegate in shell.qml
-    required property var screen
+    property var modelData
+    property var screen: modelData
 
     anchors {
         top: true
@@ -17,15 +17,13 @@ PanelWindow {
         right: true
     }
 
-    height: 46
+    implicitHeight: 46
     color: "transparent"
 
-    // Reserve bar height so windows don't overlap it
-    WlrLayershell.exclusiveZone: height
+    WlrLayershell.exclusiveZone: implicitHeight
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.namespace: "quickshell-bar"
 
-    // ── Root background pill ──────────────────────────────────────────────
     Rectangle {
         anchors.fill: parent
         anchors.margins: 4
@@ -38,7 +36,7 @@ PanelWindow {
             anchors.rightMargin: 10
             spacing: 0
 
-            // ── LEFT: workspaces + media ──────────────────────────────────
+            // LEFT: workspaces + media
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 6
@@ -50,12 +48,12 @@ PanelWindow {
                 MediaWidget { }
             }
 
-            // ── CENTER: clock ─────────────────────────────────────────────
+            // CENTER: clock
             ClockWidget {
                 Layout.alignment: Qt.AlignHCenter
             }
 
-            // ── RIGHT: system stats + tray + power ───────────────────────
+            // RIGHT: system stats + tray + power
             RowLayout {
                 Layout.fillWidth: true
                 layoutDirection: Qt.RightToLeft

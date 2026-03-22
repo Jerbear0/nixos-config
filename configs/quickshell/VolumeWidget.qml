@@ -1,45 +1,81 @@
-// VolumeWidget.qml — WirePlumber/Pipewire volume
-// Uses: Pipewire singleton, PwNode, PwNodeAudio
-//       audio.volume (0.0-1.0), audio.muted
-//       Pipewire.defaultAudioSink
-import Quickshell.Services.Pipewire
+import Quickshell.Io
 import QtQuick
-import QtQuick.Layouts
 
-RowLayout {
-    spacing: 4
+Item {
+    implicitHeight: 26
+    implicitWidth: volText.implicitWidth + 8
 
-    readonly property var sink:  Pipewire.defaultAudioSink
-    readonly property var audio: sink ? sink.audio : null
+    property string volDisplay: "?%"
+    property bool muted: false
 
-    readonly property int volPct: audio ? Math.round(audio.volume * 100) : 0
-    readonly property bool muted: audio ? audio.muted : false
+    function refresh() { volProc.running = true }
+
+    Timer {
+        interval: 2000
+        running: true
+        repeat: true
+        onTriggered: refresh()
+    }
+
+    Process {
+        id: volProc
+        command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
+        stdout: SplitParser {
+            onRead: (line) => {
+                var isMuted = line.includes("[MUTED]")
+                var match = line.match(/Volume:\s*([\d.]+)/)
+                if (match) {
+                    volDisplay = Math.round(parseFloat(match[1]) * 100) + "%"
+                    muted = isMuted
+                }
+            }
+        }
+    }
+
+    Process {
+        id: muteProc
+        command: ["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]
+        onRunningChanged: if (!running) refresh()
+    }
+
+    Process {
+        id: volumeChangeProc
+        command: ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"]
+        onRunningChanged: if (!running) refresh()
+    }
+
+    Process {
+        id: pavuProc
+        command: ["pavucontrol"]
+    }
+
+    Component.onCompleted: refresh()
 
     Text {
-        text: {
-            if (!parent.audio) return "  —"
-            if (parent.muted)  return "  —"
-            var v = parent.volPct
-            if (v === 0) return " 0%"
-            if (v < 30)  return " " + v + "%"
-            if (v < 70)  return " " + v + "%"
-            return " " + v + "%"
-        }
+        id: volText
+        anchors.centerIn: parent
+        text: " " + (parent.muted ? " —" : parent.volDisplay)
         color: parent.muted ? "#6b7280" : "#fab387"
         font.pixelSize: 12
     }
 
     MouseArea {
         anchors.fill: parent
-        onClicked: {
-            // Toggle mute via pactl (same as your Waybar config)
-            Qt.openUrlExternally("exec:pactl set-mute @DEFAULT_SINK@ toggle")
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        hoverEnabled: true
+
+        onClicked: (event) => {
+            if (event.button === Qt.RightButton) {
+                muteProc.running = true
+            } else {
+                pavuProc.running = true
+            }
         }
-        // Scroll to adjust volume
+
         onWheel: (event) => {
-            if (!parent.audio) return
-            var delta = event.angleDelta.y > 0 ? 0.05 : -0.05
-            parent.audio.volume = Math.max(0, Math.min(1.5, parent.audio.volume + delta))
+            var arg = event.angleDelta.y > 0 ? "5%+" : "5%-"
+            volumeChangeProc.command = ["wpctl", "set-volume", "-l", "1.5", "@DEFAULT_AUDIO_SINK@", arg]
+            volumeChangeProc.running = true
         }
     }
 }

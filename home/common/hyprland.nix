@@ -196,7 +196,7 @@ in
         "$mainMod, L, exec, swaylock -f -c 000000"  
   
         # Reload quickshell 
-        "$mainMod, O, exec, quickshell -r"  
+        "$mainMod, O, exec, sh -c 'pkill quickshell; sleep 0.5; quickshell &'"  
   
         # Move focus  
         "$mainMod, left, movefocus, l"  
