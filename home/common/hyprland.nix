@@ -195,8 +195,8 @@ in
         # Lock screen  
         "$mainMod, L, exec, swaylock -f -c 000000"  
   
-        # Reload waybar  
-        "$mainMod, O, exec, killall -SIGUSR2 waybar"  
+        # Reload quickshell 
+        "$mainMod, O, exec, quickshell -r"  
   
         # Move focus  
         "$mainMod, left, movefocus, l"  
@@ -337,8 +337,7 @@ in
   
       # Layer rules  
       layerrule = [  
-        "animation slide top, logout_dialog"  
-        "animation slide down, waybar"  
+        "animation slide top, logout_dialog"   
         "animation fade 50%, wallpaper"  
       ];  
     };  

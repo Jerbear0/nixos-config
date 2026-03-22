@@ -11,7 +11,7 @@
     # Desktop-specific autostart (no idle lock, different wallpaper, etc.)  
     exec-once = [  
       "swaybg -o \\* -i ~/Pictures/wallpaper.jpg -m fill"  
-      "waybar &"  
+      "quickshell &"  
       "mako &"  
       "nm-applet --indicator &"  
       "/usr/lib/polkit-kde-authentication-agent-1 &"  

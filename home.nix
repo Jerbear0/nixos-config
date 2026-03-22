@@ -85,24 +85,19 @@
     grimblast  
     mako  
     playerctl  
+    quickshell
     swaybg  
     swayidle  
-    swaylock  
-    waybar  
+    swaylock   
     wofi 
     wlogout 
   ];  
   
   ############################  
-  # Waybar  
+  # Quickshell
   ############################  
-  
-  programs.waybar = {  
-    enable = true;  
-    settings = { };  
-  };  
-  
-  xdg.configFile."waybar".source = ./configs/waybar;  
+
+  xdg.configFile."quickshell".source = ./configs/quickshell;  
   
   ############################  
   # Wofi  
