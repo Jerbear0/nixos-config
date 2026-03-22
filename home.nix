@@ -114,6 +114,14 @@
   };  
   
   xdg.configFile."wofi".source = ./configs/wofi;  
+
+  ###########################
+  # Monado default
+  ##########################
+
+  home.sessionVariables = {
+    PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES = "1";
+  };
   
   ############################  
   # Shell configuration  
