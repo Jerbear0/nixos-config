@@ -99,15 +99,6 @@
   # Caelestia
   ##########################
 
-  home.file.".config/caelestia/shell.json".text = ''
-  {
-      "background": {
-          "enabled": true,
-          "wallpaperEnabled": false
-      }
-  }
-  '';
-
   home.file.".local/state/caelestia/scheme.json".text = builtins.toJSON {
       name = "tokyonight";
       flavour = "medium";
@@ -197,6 +188,16 @@
           term13 = "82DCCC";
           term14 = "82DCCC";
           term15 = "E5E7EB";
+      };
+  };
+
+  home.file.".config/caelestia/shell.json".text = builtins.toJSON {
+      background = {
+          enabled = true;
+          wallpaperEnabled = false;
+      };
+      services = {
+          weatherLocation = "45.5017,-73.5673";
       };
   };
   

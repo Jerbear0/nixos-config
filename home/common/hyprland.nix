@@ -139,7 +139,8 @@ in
         enable_swallow = true;  
         swallow_regex = "^(nautilus|nemo|thunar|btrfs-assistant.)$";  
         focus_on_activate = true;  
-        vrr = 0;  
+        vrr = 0; 
+        disable_hyprland_guiutils_check = true; 
       };  
   
       # ===== Render =====  
@@ -183,8 +184,8 @@ in
         "$mainMod SHIFT, M, exec, loginctl terminate-user \"\""  
         "$mainMod, V, togglefloating,"  
         "$mainMod, F, fullscreen"  
-        "$mainMod, Y, pin"  
-        "$mainMod, J, togglesplit,"  
+        "$mainMod, Y, pin"
+        "$mainMod, J, layoutmsg, togglesplit"  
   
         # Grouping  
         "$mainMod, K, togglegroup,"  
@@ -296,40 +297,39 @@ in
       ];  
   
       # Window rules  
-      windowrule = [  
-        "float, class:^(org.pulseaudio.pavucontrol)"  
-        "float, class:^()$,title:^(Picture in picture)$"  
-        "float, class:^()$,title:^(Save File)$"  
-        "float, class:^()$,title:^(Open File)$"  
-        "float, class:^(LibreWolf)$,title:^(Picture-in-Picture)$"  
-        "float, class:^(blueman-manager)$"  
-        "float, class:^(xdg-desktop-portal-gtk|xdg-desktop-portal-kde|xdg-desktop-portal-hyprland)(.*)$"  
-        "float, class:^(polkit-gnome-authentication-agent-1|hyprpolkitagent|org.kde.polkit-kde-authentication-agent-1)(.*)$"  
-        "float, class:^(zenity)$"  
-        "float, class:^()$,title:^(Steam - Self Updater)$"  
-        "float, class:floating"  
-        "size 2000 1200, class:floating"  
-        "opacity 0.92, class:^(thunar|nemo)$"  
-        "opacity 0.96, class:^(discord|armcord|webcord)$"  
-        "float, title:^(Picture-in-Picture)$"  
-        "size 960 540, title:^(Picture-in-Picture)$"  
-        "move 25%-, title:^(Picture-in-Picture)$"  
-        "float, title:^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"  
-        "move 25%-, title:^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"  
-        "size 960 540, title:^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"  
-        "pin, title:^(danmufloat)$"  
-        "rounding 5, title:^(danmufloat|termfloat)$"  
-        "animation slide right, class:^(kitty|Alacritty)$"  
-        "noblur, class:^(org.mozilla.firefox)$"  
-        "bordersize 2, floating:1, onworkspace:w[fv1-10]"  
-        "bordercolor rgba(01ccffff), floating:1, onworkspace:w[fv1-10]"  
-        "rounding 20, floating:1, onworkspace:w[fv1-10]"  
-        "bordersize 3, floating:0, onworkspace:f[1-10]"  
-        "rounding 20, floating:0, onworkspace:f[1-10]"  
-        "suppressevent maximize, class:.*"  
-        "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"  
-        "suppressevent fullscreen, title:^(Star Citizen)$"
-      ];  
+      extraConfig = ''
+        windowrule = float on, match:class ^(org\.pulseaudio\.pavucontrol)$
+        windowrule = float on, match:class ^()$, match:title ^(Picture in picture)$
+        windowrule = float on, match:class ^()$, match:title ^(Save File)$
+        windowrule = float on, match:class ^()$, match:title ^(Open File)$
+        windowrule = float on, match:class ^(LibreWolf)$, match:title ^(Picture-in-Picture)$
+        windowrule = float on, match:class ^(blueman-manager)$
+        windowrule = float on, match:class ^(xdg-desktop-portal-gtk|xdg-desktop-portal-kde|xdg-desktop-portal-hyprland)(.*)$
+        windowrule = float on, match:class ^(polkit-gnome-authentication-agent-1|hyprpolkitagent|org\.kde\.polkit-kde-authentication-agent-1)(.*)$
+        windowrule = float on, match:class ^(zenity)$
+        windowrule = float on, match:class ^()$, match:title ^(Steam - Self Updater)$
+        windowrule = float on, match:class floating
+        windowrule = size 2000 1200, match:class floating
+        windowrule = opacity 0.92, match:class ^(thunar|nemo)$
+        windowrule = opacity 0.96, match:class ^(discord|armcord|webcord)$
+        windowrule = float on, match:title ^(Picture-in-Picture)$
+        windowrule = size 960 540, match:title ^(Picture-in-Picture)$
+        windowrule = move 25%-, match:title ^(Picture-in-Picture)$
+        windowrule = float on, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$
+        windowrule = move 25%-, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$
+        windowrule = size 960 540, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$
+        windowrule = pin on, match:title ^(danmufloat)$
+        windowrule = rounding 5, match:title ^(danmufloat|termfloat)$
+        windowrule = animation slide right, match:class ^(kitty|Alacritty)$
+        windowrule = no_blur on, match:class ^(org\.mozilla\.firefox)$
+        windowrule = border_size 2, match:float true, match:workspace w[fv1-10]
+        windowrule = border_color rgba(01ccffff), match:float true, match:workspace w[fv1-10]
+        windowrule = rounding 20, match:float true, match:workspace w[fv1-10]
+        windowrule = border_size 3, match:float false, match:workspace f[1-10]
+        windowrule = rounding 20, match:float false, match:workspace f[1-10]
+        windowrule = suppress_event maximize, match:class .*
+        windowrule = suppress_event fullscreen, match:title ^(Star Citizen)$
+      '';  
   
       # Workspace rules  
       workspace = [  
@@ -339,11 +339,11 @@ in
   
       # Layer rules  
       layerrule = [  
-        "animation slide top, logout_dialog"   
-        "animation fade 50%, wallpaper"  
-        "noanim, namespace:quickshell-bar"
-        "noanim, namespace:quickshell-dashboard"
-        "noanim, namespace:quickshell-dash-trigger"
+        "animation slide top, match:namespace logout_dialog"
+        "animation fade 50%, match:namespace wallpaper"
+        "no_anim on, match:namespace quickshell-bar"
+        "no_anim on, match:namespace quickshell-dashboard"
+        "no_anim on, match:namespace quickshell-dash-trigger"
       ];  
     };  
   };  
