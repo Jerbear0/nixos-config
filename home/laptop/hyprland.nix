@@ -9,7 +9,7 @@
   
     # Laptop-specific autostart  
     exec-once = [  
-      "quickshell &"  
+      "caelestia-shell &" 
       "mako &"  
       "nm-applet --indicator &"  
       "/usr/lib/polkit-kde-authentication-agent-1 &"  

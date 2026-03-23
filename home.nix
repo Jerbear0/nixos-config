@@ -1,4 +1,4 @@
-{ pkgs, hostRole ? "unknown", ... }:  
+{ pkgs, hostRole ? "unknown", inputs, ... }:  
   
 {  
   imports = [  
@@ -10,7 +10,8 @@
     ++ (if hostRole == "laptop" then [ ./home/laptop/hyprland.nix ]  
         else if hostRole == "desktop" then [ ./home/desktop/hyprland.nix ]  
         else []);  
-  
+
+  _module.args.inputs = inputs;
   home.username = "jay";  
   home.homeDirectory = "/home/jay";  
   
@@ -90,14 +91,114 @@
     swayidle  
     swaylock   
     wofi 
-    wlogout 
-  ];  
-  
-  ############################  
-  # Quickshell
-  ############################  
+    wlogout
+    inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli 
+  ];   
 
-  xdg.configFile."quickshell".source = ./configs/quickshell;  
+  ###########################
+  # Caelestia
+  ##########################
+
+  home.file.".config/caelestia/shell.json".text = ''
+  {
+      "background": {
+          "enabled": true,
+          "wallpaperEnabled": false
+      }
+  }
+  '';
+
+  home.file.".local/state/caelestia/scheme.json".text = builtins.toJSON {
+      name = "tokyonight";
+      flavour = "medium";
+      mode = "dark";
+      variant = "tonalspot";
+      colours = {
+          primary_paletteKeyColor = "82DCCC";
+          secondary_paletteKeyColor = "00AA84";
+          tertiary_paletteKeyColor = "82DCCC";
+          neutral_paletteKeyColor = "111826";
+          neutral_variant_paletteKeyColor = "182545";
+          background = "111826";
+          onBackground = "E5E7EB";
+          surface = "182545";
+          surfaceDim = "0D1220";
+          surfaceBright = "1E2D4A";
+          surfaceContainerLowest = "090E1A";
+          surfaceContainerLow = "131D30";
+          surfaceContainer = "182545";
+          surfaceContainerHigh = "1E2D4A";
+          surfaceContainerHighest = "243255";
+          onSurface = "E5E7EB";
+          surfaceVariant = "182545";
+          onSurfaceVariant = "8A9AB5";
+          inverseSurface = "E5E7EB";
+          inverseOnSurface = "111826";
+          outline = "4A5568";
+          outlineVariant = "2D3748";
+          shadow = "000000";
+          scrim = "000000";
+          surfaceTint = "82DCCC";
+          primary = "82DCCC";
+          onPrimary = "111826";
+          primaryContainer = "007D6F";
+          onPrimaryContainer = "82DCCC";
+          inversePrimary = "00AA84";
+          secondary = "00AA84";
+          onSecondary = "111826";
+          secondaryContainer = "182545";
+          onSecondaryContainer = "00AA84";
+          tertiary = "82DCCC";
+          onTertiary = "111826";
+          tertiaryContainer = "182545";
+          onTertiaryContainer = "82DCCC";
+          error = "FB958B";
+          onError = "111826";
+          errorContainer = "4C2020";
+          onErrorContainer = "FB958B";
+          primaryFixed = "82DCCC";
+          primaryFixedDim = "00AA84";
+          onPrimaryFixed = "111826";
+          onPrimaryFixedVariant = "182545";
+          secondaryFixed = "00AA84";
+          secondaryFixedDim = "007D6F";
+          onSecondaryFixed = "111826";
+          onSecondaryFixedVariant = "182545";
+          tertiaryFixed = "82DCCC";
+          tertiaryFixedDim = "00AA84";
+          onTertiaryFixed = "111826";
+          onTertiaryFixedVariant = "182545";
+          teal = "82DCCC";
+          sky = "82DCCC";
+          blue = "82DCCC";
+          text = "E5E7EB";
+          subtext1 = "8A9AB5";
+          subtext0 = "6B7A94";
+          base = "111826";
+          mantle = "0D1220";
+          crust = "090E1A";
+          success = "00AA84";
+          onSuccess = "111826";
+          successContainer = "182545";
+          onSuccessContainer = "E5E7EB";
+          term0 = "111826";
+          term1 = "FB958B";
+          term2 = "00AA84";
+          term3 = "EBCB8B";
+          term4 = "82DCCC";
+          term5 = "82DCCC";
+          term6 = "82DCCC";
+          term7 = "E5E7EB";
+          term8 = "4A5568";
+          term9 = "FB958B";
+          term10 = "00AA84";
+          term11 = "EBCB8B";
+          term12 = "82DCCC";
+          term13 = "82DCCC";
+          term14 = "82DCCC";
+          term15 = "E5E7EB";
+      };
+  };
   
   ############################  
   # Wofi  

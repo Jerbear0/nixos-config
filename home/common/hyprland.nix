@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:  
+{ config, pkgs, lib, inputs, ... }:  
   
 let  
   # Directory where this file lives: /etc/nixos/home/common  
@@ -29,12 +29,14 @@ in
 {  
   wayland.windowManager.hyprland = {  
     enable = true;  
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   
     settings = {  
       # ===== Variables / Programs =====  
       "$terminal" = "alacritty --config-file /etc/nixos/configs/alacritty.toml";  
       "$filemanager" = "dolphin";  
-      "$applauncher" = "wofi --show drun";  
+      "$applauncher" = "caelestia:launcher";  
       "$mainMod" = "SUPER";  
       "$facetracking" = "/etc/nixos/modules/facetracking";
 
@@ -56,7 +58,7 @@ in
         border_size = 3;  
         "col.active_border" = "rgba(82dcccff)";  # cachylgreen  
         "col.inactive_border" = "rgba(182545ff)"; # cachymblue  
-        layout = "dwindle";  
+        layout = "scrolling";  
   
         snap = {  
           enabled = true;  
@@ -172,7 +174,7 @@ in
         # Launch apps  
         "$mainMod, RETURN, exec, $terminal"  
         "$mainMod, E, exec, $filemanager"  
-        "$mainMod, SPACE, exec, $applauncher"  
+        "$mainMod, SPACE, global, $applauncher"  
         "$mainMod, W, exec, firefox"  
         "Control&ALT, V, execr, $facetracking" 
   
@@ -196,7 +198,7 @@ in
         "$mainMod, L, exec, swaylock -f -c 000000"  
   
         # Reload quickshell 
-        "$mainMod, O, exec, sh -c 'pkill quickshell; sleep 0.5; quickshell &'"  
+         "$mainMod, O, exec, sh -c 'pkill quickshell; sleep 0.5; caelestia-shell &'"  
   
         # Move focus  
         "$mainMod, left, movefocus, l"  

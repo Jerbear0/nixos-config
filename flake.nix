@@ -7,9 +7,12 @@
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-citizen.url = "github:LovingMelody/nix-citizen";
+    hyprland.url = "github:hyprwm/Hyprland";
+    caelestia-shell.url = "github:caelestia-dots/shell";
+    caelestia-shell.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-xr, home-manager, nix-citizen, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-xr, home-manager, nix-citizen, hyprland, ... }@inputs:
     let
       system = "x86_64-linux";
       lib = nixpkgs.lib;
@@ -43,7 +46,7 @@
               home-manager.useUserPackages = true;
               home-manager.users.jay = { pkgs, ... }:
                 import ./home.nix {
-                  inherit pkgs hostRole;
+                  inherit pkgs hostRole inputs;
                 };
             })
           ];
@@ -64,7 +67,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.jay = { pkgs, ... }:
-                import ./home.nix { inherit pkgs hostRole; };
+                import ./home.nix { inherit pkgs hostRole inputs; };
             })
           ];
         };
