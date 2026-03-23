@@ -140,7 +140,9 @@ in
         swallow_regex = "^(nautilus|nemo|thunar|btrfs-assistant.)$";  
         focus_on_activate = true;  
         vrr = 0; 
-        disable_hyprland_guiutils_check = true; 
+        disable_hyprland_guiutils_check = true;
+        disable_watchdog_warning = true;
+        disable_splash_rendering = true; 
       };  
   
       # ===== Render =====  
