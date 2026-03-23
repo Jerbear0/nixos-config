@@ -1,37 +1,26 @@
-// WorkspacePills.qml — Hyprland workspace buttons
-// Uses: Hyprland.workspaces (ObjectModel<HyprlandWorkspace>)
-//       workspace.id, .name, .active, .focused, .urgent, .activate()
+// WorkspacePills.qml
 import Quickshell
 import Quickshell.Hyprland
 import QtQuick
-import QtQuick.Layouts
 
-RowLayout {
-    id: root
-
-    // The ShellScreen this bar lives on — used to filter workspaces per monitor
+Row {
     required property var barScreen
-
     spacing: 4
 
     Repeater {
-        // All workspaces sorted by id (Hyprland singleton)
         model: Hyprland.workspaces
 
-        delegate: Rectangle {
-            required property var modelData  // HyprlandWorkspace
+        Rectangle {
+            required property var modelData
 
-            // Highlight: active on this monitor = green; urgent = red; else dim blue
-            color: {
-                if (modelData.urgent)  return "#ef4444"
-                if (modelData.focused) return "#22c55e"
-                if (modelData.active)  return "#3b82f6"
-                return "#182545"
-            }
+            color: modelData.focused ? "#82dccc"
+                 : modelData.urgent  ? "#ef4444"
+                 : modelData.active  ? "#007d6f"
+                 : "#182545"
 
-            radius: 8
-            width:  modelData.focused ? 28 : 22
+            radius: 6
             height: 26
+            width: modelData.focused ? 30 : 22
 
             Behavior on width  { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
             Behavior on color  { ColorAnimation  { duration: 150 } }
@@ -39,15 +28,25 @@ RowLayout {
             Text {
                 anchors.centerIn: parent
                 text: modelData.name
-                color: modelData.active ? "#020617" : "#e5e7eb"
+                color: modelData.focused ? "#0d1117" : "#8a9ab5"
                 font.pixelSize: 11
                 font.bold: modelData.focused
             }
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: modelData.activate()
                 cursorShape: Qt.PointingHandCursor
+                onClicked: modelData.activate()
+            }
+
+            // Hover highlight
+            HoverHandler { id: wsHover }
+            Rectangle {
+                anchors.fill: parent
+                radius: parent.radius
+                color: "white"
+                opacity: wsHover.hovered ? 0.08 : 0
+                Behavior on opacity { NumberAnimation { duration: 100 } }
             }
         }
     }

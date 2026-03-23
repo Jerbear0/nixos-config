@@ -1,38 +1,56 @@
-// StorageWidget.qml — root partition free space
-// Mirrors your existing storage.sh logic
+// StorageWidget.qml — shows all real mounted disks dynamically
 import Quickshell.Io
 import QtQuick
 
-Item {
-    implicitWidth: storText.implicitWidth + 8
-    implicitHeight: 26
+Row {
+    spacing: 8
+    property var _disks: []
 
-    property string display: "—"
-
-    Timer {
-        interval: 60000
-        running: true
-        repeat: true
-        onTriggered: storProc.running = true
-    }
-
+    Timer { interval: 60000; running: true; repeat: true; onTriggered: proc.running = true }
     Process {
-        id: storProc
+        id: proc
+        // Filter to real block devices only (/dev/sd*, /dev/nvme*, /dev/vd*)
         command: ["bash", "-c",
-            "df -h -P -l / | awk 'NR==2{print \" \" $4}'"
+            "df -h | awk '$1 ~ /^\\/dev\\/(sd|nvme|vd)/ {print $1, $4, $5, $6}'"
         ]
         stdout: SplitParser {
-            onRead: (line) => display = line.trim()
+            onRead: (line) => {
+                var parts = line.trim().split(/\s+/)
+                if (parts.length >= 4) {
+                    var newDisks = _disks.slice()
+                    newDisks.push({
+                        dev: parts[0].replace("/dev/", ""),
+                        avail: parts[1],
+                        use: parts[2],
+                        mount: parts[3]
+                    })
+                    _disks = newDisks
+                }
+            }
         }
+        onRunningChanged: if (running) _disks = []
     }
+    Component.onCompleted: proc.running = true
 
-    Component.onCompleted: storProc.running = true
-
-    Text {
-        id: storText
-        anchors.centerIn: parent
-        text: " " + display
-        color: "#e5e7eb"
-        font.pixelSize: 12
+    Repeater {
+        model: _disks
+        Row {
+            spacing: 4
+            Text {
+                text: ""
+                color: "#3fc4de"
+                font.pixelSize: 11
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                // Show mount point + available space
+                text: (modelData.mount === "/" ? "root" : modelData.mount.split("/").pop()) + " " + modelData.avail
+                color: parseInt(modelData.use) > 90 ? "#ef4444"
+                     : parseInt(modelData.use) > 75 ? "#ebcb8b"
+                     : "#e5e7eb"
+                font.pixelSize: 12
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
     }
 }

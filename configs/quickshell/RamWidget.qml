@@ -1,39 +1,26 @@
-// RamWidget.qml — used / total RAM from /proc/meminfo
 import Quickshell.Io
 import QtQuick
 
 Item {
-    implicitWidth: ramText.implicitWidth + 8
     implicitHeight: 26
+    implicitWidth: row.implicitWidth + 12
+    property string _val: "—"
 
-    property string display: "—"
-
-    Timer {
-        interval: 10000  // refresh every 10s — RAM changes slowly
-        running: true
-        repeat: true
-        onTriggered: ramProc.running = true
-    }
-
+    Timer { interval: 10000; running: true; repeat: true; onTriggered: proc.running = true }
     Process {
-        id: ramProc
+        id: proc
         command: ["bash", "-c",
-            "awk '/MemTotal/{t=$2} /MemAvailable/{a=$2} END{" +
-            "used=(t-a)/1048576; total=t/1048576; " +
-            "printf \"%.2f / %.0f GB\", used, total}' /proc/meminfo"
+            "awk '/MemTotal/{t=$2} /MemAvailable/{a=$2} END{printf \"%.1fG\", (t-a)/1048576}' /proc/meminfo"
         ]
-        stdout: SplitParser {
-            onRead: (line) => display = line.trim()
-        }
+        stdout: SplitParser { onRead: (line) => _val = line.trim() }
     }
+    Component.onCompleted: proc.running = true
 
-    Component.onCompleted: ramProc.running = true
-
-    Text {
-        id: ramText
+    Row {
+        id: row
         anchors.centerIn: parent
-        text: " " + display
-        color: "#ebcb8b"
-        font.pixelSize: 12
+        spacing: 4
+        Text { text: ""; color: "#3fc4de"; font.pixelSize: 11; anchors.verticalCenter: parent.verticalCenter }
+        Text { text: _val; color: "#ebcb8b"; font.pixelSize: 12; anchors.verticalCenter: parent.verticalCenter }
     }
 }

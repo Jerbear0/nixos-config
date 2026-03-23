@@ -1,38 +1,26 @@
-// TrayWidget.qml — system tray using Quickshell.Services.SystemTray
+// TrayWidget.qml
 import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import QtQuick
-import QtQuick.Layouts
 
-RowLayout {
+Row {
     spacing: 4
 
     Repeater {
         model: SystemTray.items
 
-        delegate: Item {
-            required property var modelData  // SystemTrayItem
+        Item {
+            required property var modelData
+            width: 20; height: 20
 
-            width: 20
-            height: 20
-
-            IconImage {
-                anchors.fill: parent
-                source: modelData.icon
-            }
+            IconImage { anchors.fill: parent; source: modelData.icon }
 
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
-                hoverEnabled: true
-
-                onClicked: (event) => {
-                    if (event.button === Qt.LeftButton) {
-                        modelData.activate()
-                    } else {
-                        modelData.secondaryActivate()
-                    }
-                }
+                onClicked: (e) => e.button === Qt.LeftButton
+                    ? modelData.activate()
+                    : modelData.secondaryActivate()
             }
         }
     }

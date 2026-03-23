@@ -52,7 +52,7 @@ in
       # ===== General =====  
       general = {  
         gaps_in = 3;  
-        gaps_out = 5;  
+        gaps_out = 20;  
         border_size = 3;  
         "col.active_border" = "rgba(82dcccff)";  # cachylgreen  
         "col.inactive_border" = "rgba(182545ff)"; # cachymblue  
@@ -66,7 +66,7 @@ in
       # ===== Decoration =====  
       decoration = {  
         active_opacity = 1;  
-        rounding = 4;  
+        rounding = 20;  
   
         blur = {  
           size = 15;  
@@ -189,7 +189,7 @@ in
         "$mainMod, Tab, changegroupactive, f"  
   
         # Toggle gaps  
-        "$mainMod SHIFT, G, exec, hyprctl --batch \"keyword general:gaps_out 5;keyword general:gaps_in 3\""  
+        "$mainMod SHIFT, G, exec, hyprctl --batch \"keyword general:gaps_out 20;keyword general:gaps_in 3\""  
         "$mainMod, G, exec, hyprctl --batch \"keyword general:gaps_out 0;keyword general:gaps_in 0\""  
   
         # Lock screen  
@@ -321,9 +321,9 @@ in
         "noblur, class:^(org.mozilla.firefox)$"  
         "bordersize 2, floating:1, onworkspace:w[fv1-10]"  
         "bordercolor rgba(01ccffff), floating:1, onworkspace:w[fv1-10]"  
-        "rounding 8, floating:1, onworkspace:w[fv1-10]"  
+        "rounding 20, floating:1, onworkspace:w[fv1-10]"  
         "bordersize 3, floating:0, onworkspace:f[1-10]"  
-        "rounding 4, floating:0, onworkspace:f[1-10]"  
+        "rounding 20, floating:0, onworkspace:f[1-10]"  
         "suppressevent maximize, class:.*"  
         "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"  
         "suppressevent fullscreen, title:^(Star Citizen)$"
@@ -331,14 +331,17 @@ in
   
       # Workspace rules  
       workspace = [  
-        "w[tv1-10], gapsout:5, gapsin:3"  
-        "f[1], gapsout:5, gapsin:3"  
+        "w[tv1-10], gapsout:20, gapsin:3"  
+        "f[1], gapsout:20, gapsin:3"  
       ];  
   
       # Layer rules  
       layerrule = [  
         "animation slide top, logout_dialog"   
         "animation fade 50%, wallpaper"  
+        "noanim, namespace:quickshell-bar"
+        "noanim, namespace:quickshell-dashboard"
+        "noanim, namespace:quickshell-dash-trigger"
       ];  
     };  
   };  

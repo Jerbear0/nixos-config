@@ -2,67 +2,93 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import QtQuick
-import QtQuick.Layouts
 
 ShellRoot {
     Variants {
         model: Quickshell.screens
 
-        PanelWindow {
+        Item {
             property var modelData
-            screen: modelData
 
-            anchors {
-                top: true
-                left: true
-                right: true
+            // Frame — handles top strip, all edges, corners, dashboard trigger
+            ScreenFrame {
+                id: frame
+		screen: modelData
+		onTopHoverSignal: barWin.visible = true
             }
 
-            height: 46
-            color: "#111827"
+            // Bar pill — appears below the top frame edge on hover
+            PanelWindow {
+                id: barWin
+                screen: modelData
+                anchors { top: true; left: true; right: true }
+                implicitHeight: 56   // T(12) + gap + pill(44)
+                color: "transparent"
+                visible: false
+                WlrLayershell.exclusiveZone: 0
+                WlrLayershell.layer: WlrLayer.Top
+                WlrLayershell.namespace: "quickshell-bar"
+                margins { left: 60; right: 60 }
 
-            WlrLayershell.exclusiveZone: 46
-            WlrLayershell.layer: WlrLayer.Top
-            WlrLayershell.namespace: "quickshell-bar"
-
-            // Three-column layout: left | center | right
-            // Left and right each fill half the remaining space
-            // Center is fixed-width and truly centered
-            Item {
-                x: 0; y: 0
-                width: parent.width
-                height: parent.height
-
-                // LEFT group — anchored left
-                Row {
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
-
-                    WorkspacePills { barScreen: modelData }
-                    MediaWidget { }
+                // Trigger: hover the frame top edge (exclusiveZone=T reserves space)
+                // barWin sits above, so hovering the top 12px of screen triggers both
+		HoverHandler {
+		    id: barHover
+		    onHoveredChanged: if (!hovered) hideTimer.restart()
                 }
 
-                // CENTER group — truly centered
-                ClockWidget {
-                    anchors.centerIn: parent
+		Timer {
+                    id: hideTimer
+                    interval: 800
+                    onTriggered: if (!barHover.hovered) barWin.visible = false
                 }
 
-                // RIGHT group — anchored right
-                Row {
-                    anchors.right: parent.right
-                    anchors.rightMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
+                Rectangle {
+                    x: 8; y: 0   // start below the frame top edge
+                    width: parent.width - 16
+                    height: 44
+                    topLeftRadius: 0
+                    topRightRadius: 0
+                    bottomLeftRadius: 12
+                    bottomRightRadius: 12
+                    gradient: Gradient {
+                        orientation: Gradient.Vertical
+                        GradientStop { position: 0.0; color: "#82dccc" }
+                        GradientStop { position: 0.15; color: Qt.rgba(0.067, 0.094, 0.149, 1.0) }
+                        GradientStop { position: 0.4; color: "#111826" }
+                    }
 
-                    CpuWidget { }
-                    RamWidget { }
-                    StorageWidget { }
-                    VolumeWidget { }
-                    TrayWidget { }
-                    PowerButton { }
+                    Item {
+                        anchors.fill: parent
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+
+                        Row {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 8
+                            WorkspacePills { barScreen: modelData }
+                            WindowTitle { }
+                        }
+
+                        ClockWidget { anchors.centerIn: parent }
+
+                        Row {
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 6
+                            VolumeWidget { }
+                            TrayWidget { }
+                            PowerButton { }
+                        }
+                    }
                 }
+            }
+
+            // Dashboard — triggered by frame left edge hover
+            DashboardPanel {
+                screen: modelData
+                triggerHovered: frame.leftHovered
             }
         }
     }
