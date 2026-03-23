@@ -185,7 +185,8 @@ in
         "$mainMod, V, togglefloating,"  
         "$mainMod, F, fullscreen"  
         "$mainMod, Y, pin"
-        "$mainMod, J, layoutmsg, togglesplit"  
+        "$mainMod, J, layoutmsg, move +col"
+        "$mainMod, K, layoutmsg, swapcol 1"  
   
         # Grouping  
         "$mainMod, K, togglegroup,"  
