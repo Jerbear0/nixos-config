@@ -172,12 +172,15 @@ in
         window_direction_monitor_fallback = true;  
       };  
   
-      # ===== Keybinds =====  
+      # ===== Keybinds ===== 
+      bindr = [
+        "$mainMod, Super_L, global, $applauncher"
+      ]; 
       bind = [  
         # Launch apps  
         "$mainMod, RETURN, exec, $terminal"  
         "$mainMod, E, exec, $filemanager"  
-        "$mainMod, SPACE, global, $applauncher"  
+       # "$mainMod, SPACE, global, $applauncher"  
         "$mainMod, W, exec, firefox"  
         "Control&ALT, V, execr, $facetracking" 
   
