@@ -219,6 +219,14 @@
     PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES = "1";
   };
 
+  security.wrappers.bwrap = {
+    source = "${pkgs.bubblewrap}/bin/bwrap";
+    setuid = true;
+    owner = "root";
+    group = "root";
+  };
+  security.unprivilegedUsernsClone = true;
+
   programs.obs-studio = {  
     enable = true;     
 
