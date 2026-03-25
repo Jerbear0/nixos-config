@@ -1,4 +1,10 @@
 { pkgs, hostRole ? "unknown", inputs, ... }:  
+
+let
+  caelestia-patched = inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli.overrideAttrs (old: {
+    patches = (old.patches or []) ++ [ ./pkgs/caelestia-drawers-bottom-layer.patch ];
+  });
+in
   
 {  
   imports = [  
@@ -92,7 +98,8 @@
     swaylock   
     wofi 
     wlogout
-    inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli 
+    #inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli 
+    caelestia-patched
   ];   
 
   ###########################
