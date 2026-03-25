@@ -1,11 +1,4 @@
-{ pkgs, hostRole ? "unknown", inputs, ... }:  
-
-let
-  caelestia-patched = inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli.overrideAttrs (old: {
-    patches = (old.patches or []) ++ [ ./pkgs/caelestia-drawers-bottom-layer.patch ];
-  });
-in
-  
+{ pkgs, hostRole ? "unknown", inputs, ... }:   
 {  
   imports = [  
     ./home/common/hyprland.nix  
@@ -98,8 +91,7 @@ in
     swaylock   
     wofi 
     wlogout
-    #inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli 
-    caelestia-patched
+    inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli 
   ];   
 
   ###########################

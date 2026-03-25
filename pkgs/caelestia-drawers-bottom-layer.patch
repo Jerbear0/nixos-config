@@ -1,8 +1,0 @@
---- a/modules/drawers/Drawers.qml
-+++ b/modules/drawers/Drawers.qml
-@@ -21,6 +21,7 @@
-             screen: scope.modelData
-             name: "drawers"
-             WlrLayershell.exclusionMode: ExclusionMode.Ignore
-+            WlrLayershell.layer: WlrLayer.Bottom
-             WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || panels.dashboard.needsKeyboard ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None

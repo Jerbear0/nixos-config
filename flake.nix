@@ -22,9 +22,6 @@
           allowUnfree = true;
         };
       };
-      caelestia-patched = inputs.caelestia-shell.packages.${system}.with-cli.overrideAttrs (old: {
-        patches = (old.patches or []) ++ [ ./pkgs/caelestia-drawers-bottom-layer.patch ];
-      });
     in {
       packages.${system} = {
         discord-music-presence = import ./pkgs/discord-music-presence.nix { inherit pkgs lib; };
