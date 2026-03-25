@@ -198,6 +198,11 @@
       services = {
           weatherLocation = "45.5017,-73.5673";
       };
+      dashboard = { dragThreshold = 0; };
+      launcher = { dragThreshold = 0; };
+      sidebar = { dragThreshold = 0; };
+      session = { dragThreshold = 0; };
+      bar = { dragThreshold = 0; };
   };
   
   ############################  
