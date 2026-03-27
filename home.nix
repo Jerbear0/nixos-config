@@ -203,6 +203,16 @@
       sidebar = { dragThreshold = 0; };
       session = { dragThreshold = 0; };
       bar = { dragThreshold = 0; };
+      general = {
+        idle = {
+          lockBeforeSleep = true;
+          inhibitWhenAudio = true;
+          timeouts = [
+            { timeout = 900;  idleAction = "lock"; }                          # lock after 15 min
+            { timeout = 1200; idleAction = "dpms off"; returnAction = "dpms on"; }  # screen off at 20 min
+          ];
+        };
+      };
   };
   
   ############################  
