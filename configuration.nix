@@ -118,6 +118,7 @@
     steam 
     steamcmd 
     steam-run
+    stress-ng
     unityhub  
     tmux  
     vim 
