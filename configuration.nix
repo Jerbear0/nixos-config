@@ -90,6 +90,7 @@
     git
     glib
     libsecret
+    obsidian
     goverlay  
     gparted
     hyprutils  
