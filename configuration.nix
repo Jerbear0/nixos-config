@@ -85,9 +85,11 @@
     element-desktop 
     esptool 
     fastfetch  
-    firefox   
-    git  
+    firefox
+    gcr
+    git
     glib
+    libsecret
     goverlay  
     gparted
     hyprutils  
@@ -293,7 +295,9 @@
   
   services.udev.enable = true;  
   services.openssh.enable = true;   
-  services.gnome.gnome-keyring.enable = true;  
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.login.enableGnomeKeyring = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;  
   services.udisks2.enable = true;
   services.gvfs.enable = true; 
 
