@@ -10,9 +10,11 @@
     hyprland.url = "github:hyprwm/Hyprland";
     caelestia-shell.url = "github:caelestia-dots/shell";
     caelestia-shell.inputs.nixpkgs.follows = "nixpkgs";
+    claude-desktop.url = "github:k3d3/claude-desktop-linux-flake";
+    claude-desktop.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-xr, home-manager, nix-citizen, hyprland, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-xr, home-manager, nix-citizen, hyprland, claude-desktop, ... }@inputs:
     let
       system = "x86_64-linux";
       lib = nixpkgs.lib;
