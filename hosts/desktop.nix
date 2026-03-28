@@ -14,6 +14,14 @@
   # Desktop uses NetworkManager for wired/wireless  
   networking.networkmanager.enable = true;  
   
+  ############################
+  # Desktop-only packages
+  ############################
+
+  environment.systemPackages = with pkgs; [
+    claude-code
+  ];
+
   ############################  
   # Graphics (NVIDIA desktop)  
   ############################  
