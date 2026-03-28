@@ -1,13 +1,13 @@
-{ pkgs, hostRole ? "unknown", inputs, ... }:   
-{  
-  imports = [  
-    ./home/common/hyprland.nix  
-  ]  
-    ++ (if builtins.pathExists ./secrets/git.nix  
-        then [ ./secrets/git.nix ]  
-        else [])  
-    ++ (if hostRole == "laptop" then [ ./home/laptop/hyprland.nix ]  
-        else if hostRole == "desktop" then [ ./home/desktop/hyprland.nix ]  
+{ pkgs, hostRole ? "unknown", inputs, ... }:
+{
+  imports = [
+    ./home/common/hyprland
+  ]
+    ++ (if builtins.pathExists ./secrets/git.nix
+        then [ ./secrets/git.nix ]
+        else [])
+    ++ (if hostRole == "laptop" then [ ./home/laptop/hyprland.nix ]
+        else if hostRole == "desktop" then [ ./home/desktop/hyprland.nix ]
         else []);  
 
   _module.args.inputs = inputs;
@@ -224,7 +224,11 @@
     # settings = { ... }; # if you want to rewrite config declaratively later  
   };  
   
-  xdg.configFile."wofi".source = ./configs/wofi;  
+  xdg.configFile."wofi".source = ./configs/wofi;
+  xdg.configFile."alacritty/alacritty.toml" = {
+    source = ./configs/alacritty.toml;
+    force = true;
+  };  
 
   ###########################
   # Monado default
@@ -238,44 +242,36 @@
   # Shell configuration  
   ############################  
   
-  programs.bash = {  
-    enable = true;  
-    enableCompletion = true;  
-  
-    # Force Starship to use our Git-tracked config  
-    sessionVariables = {  
-      STARSHIP_CONFIG = "/etc/nixos/configs/starship.toml";  
-    };  
-  
-    bashrcExtra = ''  
-      export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"  
-  
-      # Load NixOS /etc/nixos git-status segment (no PROMPT_COMMAND hacks)  
-      if [ -f /etc/nixos/configs/bash-nixos-git-status.sh ]; then  
-        . /etc/nixos/configs/bash-nixos-git-status.sh  
-      fi  
-  
-      # Initialize Starship manually  
-      eval "$(starship init bash)"  
-  
-      # Compose: NixOS status segment + Starship prompt  
-      # This is the ONLY PROMPT_COMMAND we use.  
-      PROMPT_COMMAND='PS1="$(nixos_status_segment)$(starship prompt)"'  
+  programs.bash = {
+    enable = true;
+    enableCompletion = true;
+
+    bashrcExtra = ''
+      export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
+
+      # Load NixOS git-status segment from store path
+      source ${./configs/bash-nixos-git-status.sh}
+
+      # Initialize Starship manually
+      eval "$(starship init bash)"
+
+      # Compose: NixOS status segment + Starship prompt
+      PROMPT_COMMAND='PS1="$(nixos_status_segment)$(starship prompt)"'
 
       # Ignore dups of commands in history
       HISTCONTROL=ignoredups:erasedups
-  
+
       # Put commands to run on opening terminal down here
-      fastfetch  
-    '';  
-  
-    shellAliases = {  
-      lsa = "ls -al";  
-      ns = "/etc/nixos/gitpullpush";  
-      rs-laptop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-laptop";  
-      rs-desktop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-desktop";  
+      fastfetch
+    '';
+
+    shellAliases = {
+      lsa = "ls -al";
+      ns = "/etc/nixos/gitpullpush";
+      rs-laptop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-laptop";
+      rs-desktop = "sudo nixos-rebuild switch --flake /etc/nixos#nixos-desktop";
       openuri = "dbus-monitor --session interface=org.freedesktop.portal.OpenURI";
-    };  
+    };
   };  
   
   ############################  

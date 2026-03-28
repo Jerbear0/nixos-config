@@ -1,4 +1,4 @@
-{ pkgs, lib, baballonia-unpacked }:
+{ pkgs, lib, baballonia-unpacked, username ? "jay" }:
 
 let
   baballonia-uvc-dll = ./Baballonia.LibuvcCapture.dll;
@@ -67,9 +67,9 @@ pkgs.buildFHSEnvBubblewrap {
   ];
 
   extraBwrapArgs = [
-    "--bind" "/home/jay" "/home"
-    "--bind" "/home/jay/ProjectBabble" "/home/ProjectBabble"
-    "--bind" "/home/jay/.config/VRCFaceTracking" "/home/jay/.config/VRCFaceTracking"
+    "--bind" "/home/${username}" "/home"
+    "--bind" "/home/${username}/ProjectBabble" "/home/ProjectBabble"
+    "--bind" "/home/${username}/.config/VRCFaceTracking" "/home/${username}/.config/VRCFaceTracking"
     "--share-net"
   ];
 

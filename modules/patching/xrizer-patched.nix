@@ -20,21 +20,15 @@ rustPlatform.buildRustPackage rec {
   pname = "xrizer-patched";  
   version = "next-0.3";  
   
-  src = fetchFromGitHub {  
-    owner = "ImSapphire";  
-    repo  = "xrizer";  
-    ## use the 'next' branch instead of a tag  
-    # rev   = "next";  
-    ## Pin to a specific commit instead of the moving next branch
+  src = fetchFromGitHub {
+    owner = "ImSapphire";
+    repo = "xrizer";
     rev = "a80a2732aa6e259cf072ab24ac56487dd09e9904";
-    ## placeholder; we will replace this with the real hash  
-    hash  = "sha256-axRGrFImDa3rFHeHA99S4ORsdioqLKuTHfdwLv7yQHM=";  
-  };  
-  
-  # Drop the upstream patch; it doesn't apply cleanly to your fork  
-  patches = [ ];  
-  
-  # Let Nix tell us the new cargoHash for this fork  
+    hash = "sha256-axRGrFImDa3rFHeHA99S4ORsdioqLKuTHfdwLv7yQHM=";
+  };
+
+  patches = [ ];
+
   cargoHash = "sha256-VwfBb/pEaxcPbOzA+naXT28wmyP7UMxH4xoaHCKvlsQ=";  
   
   nativeBuildInputs = [  

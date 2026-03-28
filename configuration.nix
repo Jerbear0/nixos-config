@@ -48,8 +48,7 @@
   # Nix settings  
   ############################  
   
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];  
-#  nix.settings.sandbox = false;  
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config = {  
     allowUnfree = true;  
     nvidia.acceptLicense = true;  
@@ -281,13 +280,12 @@
   
   security.rtkit.enable = true;  
   
-  services.pipewire = {  
-    enable = true;  
-    alsa.enable = true;  
-    alsa.support32Bit = true;  
-    pulse.enable = true;  
-    # jack.enable = true; # only if you ever need JACK  
-};   
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };   
  
   ############################  
   # Services  
