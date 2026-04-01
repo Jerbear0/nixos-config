@@ -54,7 +54,7 @@
     nvidia.acceptLicense = true;  
   };   
 
-  boot.kernelPackages = pkgs.linuxPackages_lqx;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
 
   nix.settings = {
     substituters = [ "https://hyprland.cachix.org" ];
