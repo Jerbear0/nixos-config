@@ -8,7 +8,7 @@
       border_size = 3;
       "col.active_border" = "rgba(82dcccff)";
       "col.inactive_border" = "rgba(182545ff)";
-      layout = "scrolling";
+      layout = "dwindle";
 
       snap = {
         enabled = true;

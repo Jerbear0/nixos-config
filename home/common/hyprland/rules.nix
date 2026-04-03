@@ -34,6 +34,7 @@
       windowrule = rounding 20, match:float false, match:workspace f[1-10]
       windowrule = suppress_event maximize, match:class .*
       windowrule = suppress_event fullscreen, match:title ^(Star Citizen)$
+      windowrule = float on, match:title ^(eso64.exe)$
     '';
 
     workspace = [
